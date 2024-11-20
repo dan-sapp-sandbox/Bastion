@@ -27,11 +27,13 @@ class HomeState extends State<Home> {
 
   Future<List<Device>> getDevices() async {
     var mockData = [
-      {'name': 'test', 'type': 'test'},
-      {'name': 'test2', 'type': 'test2'}
+      {'name': 'Kitchen Light', 'type': 'light'},
+      {'name': 'Front Door Lock', 'type': 'lock'}
     ];
     // return json.decode(mockData);
-    var mappedDevices = mockData.map((i) => Device.fromJSON(i as Map<String, dynamic>)).toList();
+    var mappedDevices = mockData
+        .map((i) => Device.fromJSON(i as Map<String, dynamic>))
+        .toList();
     return mappedDevices;
   }
 
@@ -135,6 +137,25 @@ class HomeState extends State<Home> {
               ),
             );
           },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.business),
+              label: 'Business',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.school),
+              label: 'School',
+            ),
+          ],
+          currentIndex: 0,
+          selectedItemColor: Colors.amber[800],
+          // onTap: () {},
         ));
   }
 }
