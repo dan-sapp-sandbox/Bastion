@@ -29,7 +29,8 @@ class HomeState extends State<Home> {
   Future<List<Light>> fetchLights() async {
     // var url = Uri.parse('https://openapi.api.govee.com/router/api/v1/user/devices');
     var url = Uri.parse('https://developer-api.govee.com/v1/devices');
-    var apiKey = dotenv.env['API_KEY'] as String;
+    // var apiKey = dotenv.env['API_KEY'] as String;
+    var apiKey = 'API_KEY';
     Map<String, String> requestHeaders = {
       'Content-type': 'application/json',
       'Govee-API-Key': apiKey
@@ -47,7 +48,8 @@ class HomeState extends State<Home> {
   Future<bool> turnLights(Light light, bool toOn) async {
     try {
       var url = Uri.parse('https://developer-api.govee.com/v1/devices/control');
-      var apiKey = dotenv.env['API_KEY'] as String;
+      // var apiKey = dotenv.env['API_KEY'] as String;
+      var apiKey = 'API_KEY';
       Map<String, String> requestHeaders = {
         'Content-type': 'application/json',
         'Govee-API-Key': apiKey
