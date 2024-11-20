@@ -1,4 +1,4 @@
-package com.example.lights
+package com.example.bastion
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,12 +1,11 @@
 import '../settings/settings_view.dart';
 // import 'sample_item.dart';
 // import 'sample_item_details_view.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
+// import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 
-import 'models/light.dart';
+import 'models/device.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,64 +17,33 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  late Future<List<Light>> listLights;
+  late Future<List<Device>> listDevices;
 
   @override
   void initState() {
     super.initState();
-    listLights = fetchLights();
+    listDevices = getDevices();
   }
 
-  Future<List<Light>> fetchLights() async {
-    // var url = Uri.parse('https://openapi.api.govee.com/router/api/v1/user/devices');
-    var url = Uri.parse('https://developer-api.govee.com/v1/devices');
-    // var apiKey = dotenv.env['API_KEY'] as String;
-    var apiKey = 'API_KEY';
-    Map<String, String> requestHeaders = {
-      'Content-type': 'application/json',
-      'Govee-API-Key': apiKey
-    };
-    final response = await http.get(url, headers: requestHeaders);
-    if (response.statusCode == 200) {
-      var resData = json.decode(response.body)["data"]["devices"] as List;
-      var lights = resData.map((i) => Light.fromJSON(i)).toList();
-      return lights;
-    } else {
-      throw Exception('Failed to load lights');
-    }
+  Future<List<Device>> getDevices() async {
+    var mockData = [
+      {'name': 'test', 'type': 'test'},
+      {'name': 'test2', 'type': 'test2'}
+    ];
+    // return json.decode(mockData);
+    var mappedDevices = mockData.map((i) => Device.fromJSON(i as Map<String, dynamic>)).toList();
+    return mappedDevices;
   }
 
-  Future<bool> turnLights(Light light, bool toOn) async {
-    try {
-      var url = Uri.parse('https://developer-api.govee.com/v1/devices/control');
-      // var apiKey = dotenv.env['API_KEY'] as String;
-      var apiKey = 'API_KEY';
-      Map<String, String> requestHeaders = {
-        'Content-type': 'application/json',
-        'Govee-API-Key': apiKey
-      };
-      final response = await http.put(url,
-          headers: requestHeaders,
-          body: json.encode({
-            'device': light.device,
-            'model': light.model,
-            'cmd': {"name": "turn", "value": toOn ? "on" : "off"},
-          }));
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        throw Exception('Failed to turn off light');
-      }
-    } catch (e) {
-      throw Exception(e);
-    }
+  Future<bool> toggleDevice(Device device, bool toOn) async {
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Light Manager'),
+          title: const Text('Device Manager'),
           actions: [
             IconButton(
               icon: const Icon(Icons.settings),
@@ -85,20 +53,20 @@ class HomeState extends State<Home> {
             ),
           ],
         ),
-        body: FutureBuilder<List<Light>>(
-          future: listLights,
+        body: FutureBuilder<List<Device>>(
+          future: listDevices,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.separated(
                   itemBuilder: (context, index) {
-                    var light = (snapshot.data as List<Light>)[index];
+                    var device = (snapshot.data as List<Device>)[index];
                     return Container(
                       padding: const EdgeInsets.all(10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            light.deviceName,
+                            device.name,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 22),
                           ),
@@ -121,7 +89,7 @@ class HomeState extends State<Home> {
                               ),
                             ),
                             onPressed: () {
-                              turnLights(light, true);
+                              toggleDevice(device, true);
                             },
                             child: const Text('Turn On'),
                           ),
@@ -144,7 +112,7 @@ class HomeState extends State<Home> {
                               ),
                             ),
                             onPressed: () {
-                              turnLights(light, false);
+                              toggleDevice(device, false);
                             },
                             child: const Text('Turn Off'),
                           )
@@ -155,7 +123,7 @@ class HomeState extends State<Home> {
                   separatorBuilder: (context, index) {
                     return const Divider();
                   },
-                  itemCount: (snapshot.data as List<Light>).length);
+                  itemCount: (snapshot.data as List<Device>).length);
             } else if (snapshot.hasError) {
               return Center(
                 child: Text("${snapshot.error}"),
