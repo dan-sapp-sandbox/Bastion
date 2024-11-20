@@ -142,15 +142,15 @@ class HomeState extends State<Home> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: 'Home',
+              label: 'All',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.business),
-              label: 'Business',
+              label: 'Lights',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.school),
-              label: 'School',
+              label: 'Locks',
             ),
           ],
           currentIndex: 0,
