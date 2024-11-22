@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'models/device.dart';
+import 'bottom_nav_bar.dart';
+import 'device_row.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,18 +20,18 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   late Future<List<Device>> listDevices;
-
+  int currentPageIndex = 0;
   @override
   void initState() {
     super.initState();
-    // listDevices = getDevices();
     listDevices = fetchDevices();
     // createDevice();
   }
 
   Future<List<Device>> fetchDevices() async {
     // var url = Uri.parse('http://localhost:8080/devices');
-    var url = Uri.parse('https://bastion-server-951fbdb64d29.herokuapp.com/devices');
+    var url =
+        Uri.parse('https://bastion-server-951fbdb64d29.herokuapp.com/devices');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       var resData = json.decode(response.body)["data"]["items"] as List;
@@ -42,7 +44,8 @@ class HomeState extends State<Home> {
 
   Future<bool> createDevice() async {
     // var url = Uri.parse('http://localhost:8080/devices');
-    var url = Uri.parse('https://bastion-server-951fbdb64d29.herokuapp.com/devices');
+    var url =
+        Uri.parse('https://bastion-server-951fbdb64d29.herokuapp.com/devices');
     var newDevice = {'name': 'Bedroom Light', 'type': 'light'};
     var payload = json.encode(newDevice);
 
@@ -61,27 +64,94 @@ class HomeState extends State<Home> {
     }
   }
 
-  Future<List<Device>> getDevices() async {
-    var mockData = [
-      {'id': 1, 'name': 'Kitchen Light', 'type': 'light'},
-      {'id': 2, 'name': 'Front Door Lock', 'type': 'lock'}
-    ];
-    var mappedDevices = mockData
-        .map((i) => Device.fromJSON(i as Map<String, dynamic>))
-        .toList();
-    return mappedDevices;
-  }
-
   Future<bool> toggleDevice(Device device, bool toOn) async {
     return true;
+  }
+
+  Widget _buildBody() {
+    switch (currentPageIndex) {
+      case 0:
+        return FutureBuilder<List<Device>>(
+          future: listDevices,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var devices = snapshot.data as List<Device>;
+              return GridView.builder(
+                padding: const EdgeInsets.all(10),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, // Number of columns
+                  crossAxisSpacing: 3,
+                  mainAxisSpacing: 3,
+                  childAspectRatio: 1, // Adjust based on the design
+                ),
+                itemCount: devices.length,
+                itemBuilder: (context, index) {
+                  var device = devices[index];
+                  return DeviceTile(
+                    device: device,
+                    onTurnOn: () => toggleDevice(device, true),
+                    onTurnOff: () => toggleDevice(device, false),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text("Error: ${snapshot.error}"),
+              );
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        );
+      case 1:
+        return const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.notifications, size: 64, color: Colors.amber),
+              SizedBox(height: 16),
+              Text('No new notifications'),
+            ],
+          ),
+        );
+      case 2:
+        return const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.devices, size: 64, color: Colors.blue),
+              SizedBox(height: 16),
+              Text('Device Management Section'),
+            ],
+          ),
+        );
+      default:
+        return const Center(
+          child: Text('Page not found'),
+        );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Device Manager'),
+          title: const Text(
+            'Bastion',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 32,
+            ),
+          ),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications_sharp),
+              onPressed: () {
+                Navigator.restorablePushNamed(context, SettingsView.routeName);
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
@@ -90,107 +160,14 @@ class HomeState extends State<Home> {
             ),
           ],
         ),
-        body: FutureBuilder<List<Device>>(
-          future: listDevices,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.separated(
-                  itemBuilder: (context, index) {
-                    var device = (snapshot.data as List<Device>)[index];
-                    return Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            device.name,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 22),
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                              foregroundColor:
-                                  WidgetStateProperty.all<Color>(Colors.blue),
-                              overlayColor:
-                                  WidgetStateProperty.resolveWith<Color?>(
-                                (Set<WidgetState> states) {
-                                  if (states.contains(WidgetState.hovered)) {
-                                    return Colors.blue.withOpacity(0.04);
-                                  }
-                                  if (states.contains(WidgetState.focused) ||
-                                      states.contains(WidgetState.pressed)) {
-                                    return Colors.blue.withOpacity(0.12);
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            onPressed: () {
-                              toggleDevice(device, true);
-                            },
-                            child: const Text('Turn On'),
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                              foregroundColor:
-                                  WidgetStateProperty.all<Color>(Colors.blue),
-                              overlayColor:
-                                  WidgetStateProperty.resolveWith<Color?>(
-                                (Set<WidgetState> states) {
-                                  if (states.contains(WidgetState.hovered)) {
-                                    return Colors.blue.withOpacity(0.04);
-                                  }
-                                  if (states.contains(WidgetState.focused) ||
-                                      states.contains(WidgetState.pressed)) {
-                                    return Colors.blue.withOpacity(0.12);
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            onPressed: () {
-                              toggleDevice(device, false);
-                            },
-                            child: const Text('Turn Off'),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const Divider();
-                  },
-                  itemCount: (snapshot.data as List<Device>).length);
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text("${snapshot.error}"),
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.cyanAccent,
-              ),
-            );
+        body: _buildBody(),
+        bottomNavigationBar: BottomNavBar(
+          currentIndex: currentPageIndex,
+          onItemSelected: (int index) {
+            setState(() {
+              currentPageIndex = index;
+            });
           },
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'All',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.business),
-              label: 'Lights',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school),
-              label: 'Locks',
-            ),
-          ],
-          currentIndex: 0,
-          selectedItemColor: Colors.amber[800],
-          // onTap: () {},
         ));
   }
 }
