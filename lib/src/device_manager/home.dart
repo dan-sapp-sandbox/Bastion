@@ -1,9 +1,9 @@
 import '../settings/settings_view.dart';
 // import 'sample_item.dart';
 // import 'sample_item_details_view.dart';
-// import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 
 import 'models/device.dart';
 
@@ -22,15 +22,50 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    listDevices = getDevices();
+    // listDevices = getDevices();
+    listDevices = fetchDevices();
+    // createDevice();
+  }
+
+  Future<List<Device>> fetchDevices() async {
+    // var url = Uri.parse('http://localhost:8080/devices');
+    var url = Uri.parse('https://bastion-server-951fbdb64d29.herokuapp.com/devices');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      var resData = json.decode(response.body)["data"]["items"] as List;
+      var devices = resData.map((i) => Device.fromJSON(i)).toList();
+      return devices;
+    } else {
+      throw Exception('Failed to load lights');
+    }
+  }
+
+  Future<bool> createDevice() async {
+    // var url = Uri.parse('http://localhost:8080/devices');
+    var url = Uri.parse('https://bastion-server-951fbdb64d29.herokuapp.com/devices');
+    var newDevice = {'name': 'Bedroom Light', 'type': 'light'};
+    var payload = json.encode(newDevice);
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload,
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to create devices');
+    }
   }
 
   Future<List<Device>> getDevices() async {
     var mockData = [
-      {'name': 'Kitchen Light', 'type': 'light'},
-      {'name': 'Front Door Lock', 'type': 'lock'}
+      {'id': 1, 'name': 'Kitchen Light', 'type': 'light'},
+      {'id': 2, 'name': 'Front Door Lock', 'type': 'lock'}
     ];
-    // return json.decode(mockData);
     var mappedDevices = mockData
         .map((i) => Device.fromJSON(i as Map<String, dynamic>))
         .toList();
