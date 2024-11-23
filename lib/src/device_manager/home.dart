@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'models/device.dart';
 import 'bottom_nav_bar.dart';
-import 'device_row.dart';
+import 'device_tile.dart';
 import 'api.dart';
 
 class Home extends StatefulWidget {
@@ -22,7 +22,7 @@ class HomeState extends State<Home> {
   void initState() {
     super.initState();
     listDevices = fetchDevices();
-    createDevice();
+    // createDevice();
   }
 
   Widget _buildBody() {
@@ -34,11 +34,11 @@ class HomeState extends State<Home> {
             if (snapshot.hasData) {
               var devices = snapshot.data as List<Device>;
               return GridView.builder(
-                padding: const EdgeInsets.all(2),
+                padding: const EdgeInsets.all(10),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3, // Number of columns
-                  crossAxisSpacing: 3,
-                  mainAxisSpacing: 3,
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 15,
                   childAspectRatio: 1, // Adjust based on the design
                 ),
                 itemCount: devices.length,

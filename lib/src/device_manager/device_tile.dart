@@ -46,19 +46,12 @@ class DeviceTile extends StatelessWidget {
           color: Colors.deepPurple.shade800,
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade800, // Shadow color
-            blurRadius: 4, // Softness of shadow
-            offset: const Offset(2, 2), // Shadow position
-          ),
-        ],
       ),
       child: GridTile(
         header: Align(
           alignment: Alignment.center,
           child: TextButton(
-            onPressed: onTurnOn,
+            onPressed: device.isOn ? onTurnOff : onTurnOn,
             child: Center(
               child: Text(
                 device.name,
@@ -81,7 +74,7 @@ class DeviceTile extends StatelessWidget {
         child: Icon(
           _getIconForDeviceType(device.type), // Dynamically fetch icon
           size: 36,
-          color: Colors.amber,
+          color: device.isOn ? Colors.amber : Colors.blueGrey,
         ),
       ),
     );

@@ -7,7 +7,8 @@ class Device {
       {required this.id,
       required this.type,
       required this.name,
-      required this.isOn});
+      required this.isOn
+      });
 
   factory Device.fromJSON(Map<String, dynamic> parsedJson) {
     return Device(
