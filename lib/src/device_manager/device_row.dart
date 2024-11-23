@@ -5,31 +5,33 @@ class DeviceTile extends StatelessWidget {
   final Device device;
   final VoidCallback onTurnOn;
   final VoidCallback onTurnOff;
+  final VoidCallback delete;
 
   const DeviceTile({
     super.key,
     required this.device,
     required this.onTurnOn,
     required this.onTurnOff,
+    required this.delete,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(1),
       decoration: BoxDecoration(
         color: Colors.deepPurple.shade800, // Background color
-        borderRadius: BorderRadius.circular(12), // Rounded corners
+        borderRadius: BorderRadius.circular(10), // Rounded corners
         border: Border.all(
           // Border properties
           color: Colors.deepPurple.shade800,
           width: 1,
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black12, // Shadow color
+            color: Colors.grey.shade800, // Shadow color
             blurRadius: 4, // Softness of shadow
-            offset: Offset(2, 2), // Shadow position
+            offset: const Offset(2, 2), // Shadow position
           ),
         ],
       ),
@@ -49,6 +51,13 @@ class DeviceTile extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        footer: IconButton(
+          icon: const Icon(
+            Icons.delete_outline,
+            color: Colors.red,
+          ),
+          onPressed: delete,
         ),
         child: const Icon(
           Icons.lightbulb,

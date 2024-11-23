@@ -46,7 +46,7 @@ class HomeState extends State<Home> {
     // var url = Uri.parse('http://localhost:8080/devices');
     var url =
         Uri.parse('https://bastion-server-951fbdb64d29.herokuapp.com/devices');
-    var newDevice = {'name': 'Bedroom Light', 'type': 'light'};
+    var newDevice = {'name': 'Front Door', 'type': 'lock'};
     var payload = json.encode(newDevice);
 
     final response = await http.post(
@@ -56,6 +56,22 @@ class HomeState extends State<Home> {
       },
       body: payload,
     );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to create devices');
+    }
+  }
+
+  Future<bool> deleteDevice(int id) async {
+    // var url = Uri.parse('http://localhost:8080/devices');
+    var url = Uri.parse(
+        'https://bastion-server-951fbdb64d29.herokuapp.com/devices/${id}');
+
+    final response = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
       return true;
@@ -77,7 +93,7 @@ class HomeState extends State<Home> {
             if (snapshot.hasData) {
               var devices = snapshot.data as List<Device>;
               return GridView.builder(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(2),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3, // Number of columns
                   crossAxisSpacing: 3,
@@ -91,6 +107,7 @@ class HomeState extends State<Home> {
                     device: device,
                     onTurnOn: () => toggleDevice(device, true),
                     onTurnOff: () => toggleDevice(device, false),
+                    delete: () => deleteDevice(device.id),
                   );
                 },
               );
