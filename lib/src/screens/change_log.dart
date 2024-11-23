@@ -49,7 +49,7 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
           );
         } else {
           List<ChangeLogEntry> changeLogs = snapshot.data!;
-          return ListView.builder(
+          return ListView.separated(
             itemCount: changeLogs.length,
             itemBuilder: (context, index) {
               final changeLog = changeLogs[index];
@@ -67,9 +67,10 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(formattedDate,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           Text(changeLog.change),
                         ],
                       ),
@@ -78,6 +79,11 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
                 ),
               );
             },
+            separatorBuilder: (context, index) => const Divider(
+              color: Colors.grey,
+              thickness: 0.5,
+              height: 1,
+            ),
           );
         }
       },
