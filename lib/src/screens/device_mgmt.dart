@@ -34,7 +34,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.edit),
+                icon: const Icon(Icons.edit_outlined),
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
@@ -59,7 +59,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.delete),
+                icon: const Icon(Icons.delete_outlined, color: Colors.red),
                 onPressed: () {
                   widget.deleteDevice(device.id);
                   widget.fetchDevices();

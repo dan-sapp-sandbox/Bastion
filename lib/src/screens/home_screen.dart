@@ -49,18 +49,34 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      bool success = await _deviceService.toggleDevice(device, toOn);
-      if (success) {
-        var devices = await _deviceService.fetchDevices();
-        setState(() {
-          _devices = devices;
-        });
-      }
+      var devices = await _deviceService.toggleDevice(device, toOn);
+      setState(() {
+        _devices = devices;
+      });
     } catch (e) {
       setState(() {
         _devices = _devices;
       });
       debugPrint('Error deleting device: $e');
+    }
+  }
+
+  Future<void> _addDevice(Device newDevice) async {
+    var oldDevices = _devices;
+    setState(() {
+      _devices.add(newDevice);
+    });
+
+    try {
+      var devices = await _deviceService.addDevice(newDevice);
+      setState(() {
+        _devices = devices;
+      });
+    } catch (e) {
+      setState(() {
+        _devices = oldDevices;
+      });
+      debugPrint('Error editing device: $e');
     }
   }
 
@@ -75,13 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      bool success = await _deviceService.editDevice(newDevice);
-      if (success) {
-        var devices = await _deviceService.fetchDevices();
-        setState(() {
-          _devices = devices;
-        });
-      }
+      var devices = await _deviceService.editDevice(newDevice);
+      setState(() {
+        _devices = devices;
+      });
     } catch (e) {
       setState(() {
         _devices = _devices;
@@ -96,13 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      bool success = await _deviceService.deleteDevice(id);
-      if (success) {
-        var devices = await _deviceService.fetchDevices();
-        setState(() {
-          _devices = devices;
-        });
-      }
+      var devices = await _deviceService.deleteDevice(id);
+      setState(() {
+        _devices = devices;
+      });
     } catch (e) {
       setState(() {
         _devices = _devices;
@@ -135,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
           DeviceMgmt(
               devices: _devices,
               fetchDevices: _fetchDevices,
-              addDevice: _deviceService.addDevice,
+              addDevice: _addDevice,
               editDevice: _editDevice,
               deleteDevice: _deleteDevice),
         ],
@@ -149,14 +159,13 @@ class _HomeScreenState extends State<HomeScreen> {
               return Padding(
                 padding: MediaQuery.of(context).viewInsets,
                 child: DeviceForm(
-                  onEdit: (deviceData) async {},
-                  onAdd: (deviceData) async {
-                    final navigator = Navigator.of(context);
-                    await _deviceService.addDevice(deviceData);
-                    navigator.pop();
-                    _fetchDevices();
-                  }
-                ),
+                    onEdit: (deviceData) async {},
+                    onAdd: (deviceData) async {
+                      final navigator = Navigator.of(context);
+                      await _deviceService.addDevice(deviceData);
+                      navigator.pop();
+                      _fetchDevices();
+                    }),
               );
             },
           );

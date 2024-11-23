@@ -46,25 +46,31 @@ class DeviceTile extends StatelessWidget {
         ),
       ),
       child: GridTile(
-          header: Align(
-            alignment: Alignment.center,
-            child: Text(
-              device.name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
+        header: Align(
+          alignment: Alignment.center,
+          child: Text(
+            device.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
             ),
           ),
-          child: IconButton(
-            icon: Icon(
+        ),
+        child: InkWell(
+          onTap: device.isOn ? onTurnOff : onTurnOn,
+          borderRadius:
+              BorderRadius.circular(10), // Match ripple to button shape
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
               _getIconForDeviceType(device.type), // Dynamically fetch icon
               size: 36,
               color: device.isOn ? Colors.amber : Colors.blueGrey,
             ),
-            onPressed: device.isOn ? onTurnOff : onTurnOn,
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

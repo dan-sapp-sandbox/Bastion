@@ -10,37 +10,42 @@ class DeviceService {
   Future<List<Device>> fetchDevices() async {
     final response = await http.get(Uri.parse(baseUrl));
     if (response.statusCode == 200) {
-      var resData = json.decode(response.body)["data"]["items"] as List;
+      var resData = json.decode(response.body)["data"] as List;
       return resData.map((i) => Device.fromJSON(i)).toList();
     } else {
       throw Exception('Failed to load devices');
     }
   }
 
-  Future<bool> addDevice(Device device) async {
+  Future<List<Device>> addDevice(Device device) async {
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(device.toMap()),
     );
-    return response.statusCode == 200;
+    if (response.statusCode == 201) {
+      var resData = json.decode(response.body)["data"] as List;
+      return resData.map((i) => Device.fromJSON(i)).toList();
+    } else {
+      throw Exception('Failed to load devices');
+    }
   }
 
-  Future<bool> deleteDevice(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id'));
-    return response.statusCode == 200;
-  }
-
-  Future<bool> editDevice(Device device) async {
+  Future<List<Device>> editDevice(Device device) async {
     final response = await http.put(
       Uri.parse('$baseUrl/${device.id}'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(device.toMap()),
     );
-    return response.statusCode == 200;
+    if (response.statusCode == 201) {
+      var resData = json.decode(response.body)["data"] as List;
+      return resData.map((i) => Device.fromJSON(i)).toList();
+    } else {
+      throw Exception('Failed to load devices');
+    }
   }
 
-  Future<bool> toggleDevice(Device device, bool toOn) async {
+  Future<List<Device>> toggleDevice(Device device, bool toOn) async {
     final response = await http.put(
       Uri.parse('$baseUrl/${device.id}'),
       headers: {'Content-Type': 'application/json'},
@@ -51,6 +56,21 @@ class DeviceService {
         "isOn": toOn,
       }),
     );
-    return response.statusCode == 200;
+    if (response.statusCode == 201) {
+      var resData = json.decode(response.body)["data"] as List;
+      return resData.map((i) => Device.fromJSON(i)).toList();
+    } else {
+      throw Exception('Failed to load devices');
+    }
+  }
+
+  Future<List<Device>> deleteDevice(int id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/$id'));
+    if (response.statusCode == 201) {
+      var resData = json.decode(response.body)["data"] as List;
+      return resData.map((i) => Device.fromJSON(i)).toList();
+    } else {
+      throw Exception('Failed to load devices');
+    }
   }
 }
