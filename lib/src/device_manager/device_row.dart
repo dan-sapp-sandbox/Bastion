@@ -15,6 +15,25 @@ class DeviceTile extends StatelessWidget {
     required this.delete,
   });
 
+  IconData _getIconForDeviceType(String type) {
+    switch (type) {
+      case 'light':
+        return Icons.lightbulb;
+      case 'lock':
+        return Icons.lock;
+      case 'fan':
+        return Icons.air;
+      case 'thermostat':
+        return Icons.thermostat;
+      case 'speaker':
+        return Icons.speaker;
+      case 'camera':
+        return Icons.videocam;
+      default:
+        return Icons.device_unknown; // Default icon for unknown types
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -59,8 +78,8 @@ class DeviceTile extends StatelessWidget {
           ),
           onPressed: delete,
         ),
-        child: const Icon(
-          Icons.lightbulb,
+        child: Icon(
+          _getIconForDeviceType(device.type), // Dynamically fetch icon
           size: 36,
           color: Colors.amber,
         ),
