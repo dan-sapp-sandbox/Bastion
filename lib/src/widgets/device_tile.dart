@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'models/device.dart';
+import '../models/device.dart';
 
 class DeviceTile extends StatelessWidget {
   final Device device;
   final VoidCallback onTurnOn;
   final VoidCallback onTurnOff;
-  final VoidCallback delete;
 
   const DeviceTile({
     super.key,
     required this.device,
     required this.onTurnOn,
     required this.onTurnOff,
-    required this.delete,
   });
 
   IconData _getIconForDeviceType(String type) {

@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+import '../models/device.dart';
+import '../widgets/device_tile.dart';
+
+class DeviceGrid extends StatelessWidget {
+  final List<Device> devices;
+  final Function onRefresh;
+  final Function toggleDevice;
+
+  const DeviceGrid({super.key, required this.devices, required this.onRefresh, required this.toggleDevice});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(10),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1,
+      ),
+      itemCount: devices.length,
+      itemBuilder: (context, index) {
+        var device = devices[index];
+        return DeviceTile(
+          device: device,
+          onTurnOn: () => toggleDevice(device, true),
+          onTurnOff: () => toggleDevice(device, false),
+        );
+      },
+    );
+  }
+}
