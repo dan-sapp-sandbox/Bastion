@@ -37,7 +37,7 @@ class DeviceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(1),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.deepPurple.shade800, // Background color
         borderRadius: BorderRadius.circular(10), // Rounded corners
@@ -48,35 +48,25 @@ class DeviceTile extends StatelessWidget {
         ),
       ),
       child: GridTile(
-        header: Align(
-          alignment: Alignment.center,
-          child: TextButton(
-            onPressed: device.isOn ? onTurnOff : onTurnOn,
-            child: Center(
-              child: Text(
-                device.name,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
+          header: Align(
+            alignment: Alignment.center,
+            child: Text(
+              device.name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
               ),
             ),
           ),
-        ),
-        footer: IconButton(
-          icon: const Icon(
-            Icons.delete_outline,
-            color: Colors.red,
-          ),
-          onPressed: delete,
-        ),
-        child: Icon(
-          _getIconForDeviceType(device.type), // Dynamically fetch icon
-          size: 36,
-          color: device.isOn ? Colors.amber : Colors.blueGrey,
-        ),
-      ),
+          child: IconButton(
+            icon: Icon(
+              _getIconForDeviceType(device.type), // Dynamically fetch icon
+              size: 36,
+              color: device.isOn ? Colors.amber : Colors.blueGrey,
+            ),
+            onPressed: device.isOn ? onTurnOff : onTurnOn,
+          )),
     );
   }
 }

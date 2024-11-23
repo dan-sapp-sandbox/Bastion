@@ -112,8 +112,8 @@ class HomeState extends State<Home> {
                 padding: const EdgeInsets.all(10),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3, // Number of columns
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
                   childAspectRatio: 1, // Adjust based on the design
                 ),
                 itemCount: _devices.length,
@@ -150,15 +150,43 @@ class HomeState extends State<Home> {
           ),
         );
       case 2:
-        return const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.devices, size: 64, color: Colors.blue),
-              SizedBox(height: 16),
-              Text('Device Management Section'),
-            ],
-          ),
+        return FutureBuilder<List<Device>>(
+          future: listDevices,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                padding: const EdgeInsets.all(10),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  var device = snapshot.data![index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(device.name),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            // Call your delete function here
+                            deleteDevice(device.id);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text("Error: ${snapshot.error}"),
+              );
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
         );
       default:
         return const Center(
