@@ -6,7 +6,14 @@ class NotificationsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('No new notifications'),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.notifications, size: 64, color: Colors.amber),
+          SizedBox(height: 16),
+          Text('No new notifications'),
+        ],
+      ),
     );
   }
 }

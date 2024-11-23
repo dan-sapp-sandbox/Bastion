@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
+import '../models/device.dart';
 
-class AddDeviceForm extends StatefulWidget {
-  final Function(Map<String, dynamic>) onAdd;
+class DeviceForm extends StatefulWidget {
+  final Function(Device) onAdd;
+  final Function(Device) onEdit;
+  final Device? device;
 
-  const AddDeviceForm({super.key, required this.onAdd});
+  const DeviceForm(
+      {super.key, required this.onAdd, required this.onEdit, this.device});
 
   @override
-  AddDeviceFormState createState() => AddDeviceFormState();
+  DeviceFormState createState() => DeviceFormState();
 }
 
-class AddDeviceFormState extends State<AddDeviceForm> {
+class DeviceFormState extends State<DeviceForm> {
   final _formKey = GlobalKey<FormState>();
+  int? _id;
   String _name = '';
   String _type = 'light'; // Default type
   bool _isOn = false;
+  bool isAdd = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isAdd = widget.device == null;
+    _id = widget.device?.id;
+    _name = widget.device?.name ?? '';
+    _type = widget.device?.type ?? 'light';
+    _isOn = widget.device?.isOn ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +38,10 @@ class AddDeviceFormState extends State<AddDeviceForm> {
       child: Form(
         key: _formKey,
         child: Column(
-          mainAxisSize:
-              MainAxisSize.min, // Ensure the form fits within the modal
+          mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
+              initialValue: _name,
               decoration: const InputDecoration(labelText: 'Device Name'),
               onSaved: (value) => _name = value ?? '',
               validator: (value) {
@@ -43,7 +59,18 @@ class AddDeviceFormState extends State<AddDeviceForm> {
                 DropdownMenuItem(value: 'switch', child: Text('Switch')),
                 DropdownMenuItem(value: 'appliance', child: Text('Appliance')),
               ],
-              onChanged: (value) => _type = value!,
+              onChanged: (value) {
+                setState(() {
+                  _type =
+                      value ?? 'light'; // Ensure a valid value is always set
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a device type';
+                }
+                return null;
+              },
             ),
             SwitchListTile(
               title: const Text('Device is On'),
@@ -55,14 +82,17 @@ class AddDeviceFormState extends State<AddDeviceForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  widget.onAdd({
-                    'name': _name,
-                    'type': _type,
-                    'isOn': _isOn,
-                  });
+                  Device device = Device(
+                    id: _id ??
+                        0, // Use a default id if _id is null (for adding a new device)
+                    name: _name,
+                    type: _type,
+                    isOn: _isOn,
+                  );
+                  _id == null ? widget.onAdd(device) : widget.onEdit(device);
                 }
               },
-              child: const Text('Add Device'),
+              child: Text(isAdd ? 'Add Device' : 'Edit Device'),
             ),
           ],
         ),

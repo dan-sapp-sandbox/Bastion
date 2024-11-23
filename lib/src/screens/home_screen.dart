@@ -5,7 +5,7 @@ import '../widgets/bottom_nav_bar.dart';
 import 'device_grid.dart';
 import './notifications_view.dart';
 import './device_mgmt.dart';
-import './add_device_form.dart';
+import 'device_form.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -64,6 +64,32 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _editDevice(Device newDevice) async {
+    setState(() {
+      _devices = _devices.map((d) {
+        if (d.id == newDevice.id) {
+          return newDevice;
+        }
+        return d;
+      }).toList();
+    });
+
+    try {
+      bool success = await _deviceService.editDevice(newDevice);
+      if (success) {
+        var devices = await _deviceService.fetchDevices();
+        setState(() {
+          _devices = devices;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _devices = _devices;
+      });
+      debugPrint('Error editing device: $e');
+    }
+  }
+
   Future<void> _deleteDevice(int id) async {
     setState(() {
       _devices = _devices.where((d) => d.id != id).toList();
@@ -109,6 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
           DeviceMgmt(
               devices: _devices,
               fetchDevices: _fetchDevices,
+              addDevice: _deviceService.addDevice,
+              editDevice: _editDevice,
               deleteDevice: _deleteDevice),
         ],
       ),
@@ -120,13 +148,14 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (BuildContext context) {
               return Padding(
                 padding: MediaQuery.of(context).viewInsets,
-                child: AddDeviceForm(
+                child: DeviceForm(
+                  onEdit: (deviceData) async {},
                   onAdd: (deviceData) async {
                     final navigator = Navigator.of(context);
                     await _deviceService.addDevice(deviceData);
                     navigator.pop();
                     _fetchDevices();
-                  },
+                  }
                 ),
               );
             },
