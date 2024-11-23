@@ -14,7 +14,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBar(
       onDestinationSelected: onItemSelected,
-      indicatorColor: Colors.amber,
+      indicatorColor: Colors.blue,
       selectedIndex: currentIndex,
       destinations: const <Widget>[
         NavigationDestination(
@@ -23,15 +23,12 @@ class BottomNavBar extends StatelessWidget {
           label: 'Dashboard',
         ),
         NavigationDestination(
-          icon: Badge(child: Icon(Icons.notifications_sharp)),
+          icon: Icon(Icons.history),
           label: 'Changelog',
         ),
         NavigationDestination(
-          icon: Badge(
-            label: Text('2'),
-            child: Icon(Icons.messenger_sharp),
-          ),
-          label: 'Devices Mgmt',
+          icon: Icon(Icons.devices),
+          label: 'Device Mgmt',
         ),
       ],
     );

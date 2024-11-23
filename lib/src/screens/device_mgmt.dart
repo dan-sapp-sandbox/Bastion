@@ -9,13 +9,14 @@ class DeviceMgmt extends StatefulWidget {
   final Function editDevice;
   final Function fetchDevices;
 
-  const DeviceMgmt(
-      {super.key,
-      required this.devices,
-      required this.deleteDevice,
-      required this.editDevice,
-      required this.addDevice,
-      required this.fetchDevices});
+  const DeviceMgmt({
+    super.key,
+    required this.devices,
+    required this.deleteDevice,
+    required this.editDevice,
+    required this.addDevice,
+    required this.fetchDevices,
+  });
 
   @override
   State<DeviceMgmt> createState() => _DeviceMgmtState();
@@ -24,7 +25,7 @@ class DeviceMgmt extends StatefulWidget {
 class _DeviceMgmtState extends State<DeviceMgmt> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
       itemCount: widget.devices.length,
       itemBuilder: (context, index) {
         var device = widget.devices[index];
@@ -69,6 +70,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
           ),
         );
       },
+      separatorBuilder: (context, index) => const Divider(),
     );
   }
 }
