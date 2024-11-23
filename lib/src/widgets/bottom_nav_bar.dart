@@ -24,7 +24,7 @@ class BottomNavBar extends StatelessWidget {
         ),
         NavigationDestination(
           icon: Badge(child: Icon(Icons.notifications_sharp)),
-          label: 'Actions',
+          label: 'Changelog',
         ),
         NavigationDestination(
           icon: Badge(

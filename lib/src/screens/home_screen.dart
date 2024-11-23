@@ -3,7 +3,7 @@ import '../services/device_service.dart';
 import '../models/device.dart';
 import '../widgets/bottom_nav_bar.dart';
 import 'device_grid.dart';
-import './notifications_view.dart';
+import 'change_log.dart';
 import './device_mgmt.dart';
 import 'device_form.dart';
 
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
               devices: _devices,
               onRefresh: _fetchDevices,
               toggleDevice: _toggleDevice),
-          const NotificationsView(),
+          const ChangeLogPage(),
           DeviceMgmt(
               devices: _devices,
               fetchDevices: _fetchDevices,

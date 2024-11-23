@@ -18,7 +18,6 @@ class Device {
     );
   }
 
-  // Factory constructor to create a Device from a Map<String, dynamic>
   factory Device.fromMap(Map<String, dynamic> map) {
     return Device(
       id: map['id'],
@@ -28,7 +27,6 @@ class Device {
     );
   }
 
-  // Method to convert Device back to a map (for saving or serialization)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
