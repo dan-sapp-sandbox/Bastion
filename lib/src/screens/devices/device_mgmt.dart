@@ -3,12 +3,34 @@ import '../../models/device.dart';
 import '../../services/device_service.dart';
 import 'device_form.dart';
 
-class DeviceMgmt extends StatelessWidget {
-  DeviceMgmt({super.key, required this.devices, required this.updateDevices});
+class DeviceMgmt extends StatefulWidget {
+  const DeviceMgmt({super.key});
   static const routeName = '/devices';
-  final Future<List<Device>>? devices;
+
+  @override
+  State<DeviceMgmt> createState() => _DeviceMgmtState();
+}
+
+class _DeviceMgmtState extends State<DeviceMgmt> {
+  Future<List<Device>>? _devices;
   final DeviceService _deviceService = DeviceService();
-  final Function(List<Device>) updateDevices;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDevices();
+  }
+
+  Future<void> _fetchDevices() async {
+    var devices = await _deviceService.fetchDevices();
+    updateDevices(devices);
+  }
+
+  void updateDevices(devices) {
+    setState(() {
+      _devices = Future.value(devices);
+    });
+  }
 
   Future<void> _addDevice(Device newDevice) async {
     var newDevices = await _deviceService.addDevice(newDevice);
@@ -29,7 +51,7 @@ class DeviceMgmt extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<List<Device>>(
-        future: devices, // Using Future passed down to the widget
+        future: _devices,
         builder: (BuildContext context, AsyncSnapshot<List<Device>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

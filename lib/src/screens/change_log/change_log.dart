@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import '../../models/change_log.dart';
 import 'package:intl/intl.dart';
+import '../../services/change_log_service.dart';
 
 class ChangeLogPage extends StatefulWidget {
-  const ChangeLogPage({super.key, required this.changeLog});
+  const ChangeLogPage({super.key});
   static const routeName = '/change-log';
-  final Future<List<ChangeLogEntry>>? changeLog;
   @override
   State<ChangeLogPage> createState() => _ChangeLogPageState();
 }
 
 class _ChangeLogPageState extends State<ChangeLogPage> {
+  Future<List<ChangeLogEntry>>? _changeLog;
+  final ChangeLogService _changeLogService = ChangeLogService();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchChangeLogs();
+  }
+
+  Future<void> _fetchChangeLogs() async {
+    var logs = await _changeLogService.fetchChangeLog();
+    setState(() {
+      _changeLog = Future.value(logs);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ChangeLogEntry>>(
-      future: widget.changeLog,
+      future: _changeLog,
       builder:
           (BuildContext context, AsyncSnapshot<List<ChangeLogEntry>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

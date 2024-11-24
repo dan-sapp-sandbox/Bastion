@@ -8,10 +8,6 @@ import 'screens/change_log/change_log.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_view.dart';
-import 'models/change_log.dart';
-import 'models/device.dart';
-import 'services/change_log_service.dart';
-import 'services/device_service.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -27,43 +23,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int currentPageIndex = 0;
-  bool _isLoading = false;
-
-  final ChangeLogService _changeLogService = ChangeLogService();
-  Future<List<ChangeLogEntry>>? _changeLog;
-
-  final DeviceService _deviceService = DeviceService();
-  Future<List<Device>>? _devices;
 
   @override
   void initState() {
     super.initState();
-    _changeLog = _fetchChangeLogs();
-    _fetchDevices();
-  }
-
-  Future<List<ChangeLogEntry>> _fetchChangeLogs() async {
-    setState(() {
-      _isLoading = true;
-    });
-    var logs = await _changeLogService.fetchChangeLog();
-    setState(() {
-      _isLoading = false;
-    });
-    return logs;
-  }
-
-  Future<void> _fetchDevices() async {
-    var devices = await _deviceService.fetchDevices();
-    setState(() {
-      _devices = Future.value(devices);
-    });
-  }
-
-  void updateDevices(devices) {
-    setState(() {
-      _devices = Future.value(devices);
-    });
   }
 
   @override
@@ -95,20 +58,15 @@ class _MyAppState extends State<MyApp> {
                 );
               case Dashboard.routeName:
                 return MaterialPageRoute(
-                  builder: (_) =>
-                      Dashboard(devices: _devices, updateDevices: updateDevices),
+                  builder: (_) => Dashboard(index: currentPageIndex),
                 );
               case DeviceMgmt.routeName:
-                return MaterialPageRoute(
-                    builder: (_) =>
-                        DeviceMgmt(devices: _devices, updateDevices: updateDevices));
+                return MaterialPageRoute(builder: (_) => const DeviceMgmt());
               case ChangeLogPage.routeName:
-                return MaterialPageRoute(
-                    builder: (_) => ChangeLogPage(changeLog: _changeLog));
+                return MaterialPageRoute(builder: (_) => const ChangeLogPage());
               default:
                 return MaterialPageRoute(
-                    builder: (_) =>
-                        Dashboard(devices: _devices, updateDevices: updateDevices));
+                    builder: (_) => Dashboard(index: currentPageIndex));
             }
           },
           home: Scaffold(
@@ -120,29 +78,20 @@ class _MyAppState extends State<MyApp> {
                 IndexedStack(
                   index: currentPageIndex,
                   children: [
-                    Dashboard(devices: _devices, updateDevices: updateDevices),
-                    DeviceMgmt(devices: _devices, updateDevices: updateDevices),
-                    ChangeLogPage(changeLog: _changeLog),
-                    ChangeLogPage(changeLog: _changeLog),
+                    Dashboard(index: currentPageIndex),
+                    const DeviceMgmt(),
+                    const ChangeLogPage(),
+                    const ChangeLogPage(),
                     SettingsView(
                       controller: widget.settingsController,
                     ),
                   ],
                 ),
-                if (_isLoading) // Display loading indicator when loading
-                  const Center(
-                    child: CircularProgressIndicator(),
-                  ),
               ],
             ),
             bottomNavigationBar: BottomNavBar(
               currentIndex: currentPageIndex,
               onItemSelected: (index) async {
-                if (index == 0 || index == 1) {
-                  _fetchDevices();
-                } else if (index == 2 || index == 3) {
-                  _changeLog = _fetchChangeLogs();
-                }
                 setState(() {
                   currentPageIndex = index;
                 });
