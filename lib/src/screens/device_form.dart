@@ -56,8 +56,11 @@ class DeviceFormState extends State<DeviceForm> {
               decoration: const InputDecoration(labelText: 'Device Type'),
               items: const [
                 DropdownMenuItem(value: 'light', child: Text('Light')),
-                DropdownMenuItem(value: 'switch', child: Text('Switch')),
-                DropdownMenuItem(value: 'appliance', child: Text('Appliance')),
+                DropdownMenuItem(value: 'lock', child: Text('Lock')),
+                DropdownMenuItem(value: 'fan', child: Text('Fan')),
+                DropdownMenuItem(value: 'thermostat', child: Text('Thermostat')),
+                DropdownMenuItem(value: 'speaker', child: Text('Speaker')),
+                DropdownMenuItem(value: 'camera', child: Text('Camera')),
               ],
               onChanged: (value) {
                 setState(() {
