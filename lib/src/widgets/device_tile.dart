@@ -37,12 +37,8 @@ class DeviceTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: Colors.deepPurple.shade800.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: Colors.deepPurple.shade800.withOpacity(0.5),
-          width: 1,
-        ),
+        color: Colors.deepPurple.shade800.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(15),
       ),
       child: GridTile(
         header: Align(
