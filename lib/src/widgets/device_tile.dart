@@ -38,30 +38,34 @@ class DeviceTile extends StatelessWidget {
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.deepPurple.shade800.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: GridTile(
-        header: Align(
-          alignment: Alignment.center,
-          child: Text(
-            device.name,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-        ),
         child: InkWell(
           onTap: device.isOn ? onTurnOff : onTurnOn,
-          borderRadius:
-              BorderRadius.circular(10), // Match ripple to button shape
+          borderRadius: BorderRadius.circular(20),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              _getIconForDeviceType(device.type), // Dynamically fetch icon
-              size: 36,
-              color: device.isOn ? Colors.amber : Colors.blueGrey,
+            child: Row(
+              children: [
+                Icon(
+                  _getIconForDeviceType(device.type),
+                  size: 28,
+                  color: device.isOn ? Colors.amber : Colors.blueGrey,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    device.name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.amber,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

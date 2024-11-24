@@ -14,10 +14,10 @@ class DeviceGrid extends StatelessWidget {
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 1,
+        childAspectRatio: 2,
       ),
       itemCount: devices.length,
       itemBuilder: (context, index) {
