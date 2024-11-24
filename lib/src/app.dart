@@ -9,7 +9,9 @@ import 'widgets/bottom_nav_bar.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_view.dart';
 import 'models/change_log.dart';
+import 'models/device.dart';
 import 'services/change_log_service.dart';
+import 'services/device_service.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -24,18 +26,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    _changeLog = _fetchChangeLogs();
-  }
-
   int currentPageIndex = 0;
 
   final ChangeLogService _changeLogService = ChangeLogService();
   Future<List<ChangeLogEntry>>? _changeLog;
   Future<List<ChangeLogEntry>> _fetchChangeLogs() async {
     return await _changeLogService.fetchChangeLog();
+  }
+
+  final DeviceService _deviceService = DeviceService();
+  Future<List<Device>>? _devices;
+  Future<List<Device>> _fetchDevices() async {
+    return await _deviceService.fetchDevices();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _changeLog = _fetchChangeLogs();
+    _devices = _fetchDevices();
   }
 
   @override
@@ -66,14 +75,18 @@ class _MyAppState extends State<MyApp> {
                   ),
                 );
               case Dashboard.routeName:
-                return MaterialPageRoute(builder: (_) => const Dashboard());
+                return MaterialPageRoute(
+                  builder: (_) => Dashboard(devices: _devices),
+                );
+              case DeviceMgmt.routeName:
+                return MaterialPageRoute(
+                    builder: (_) => DeviceMgmt(devices: _devices));
               case ChangeLogPage.routeName:
                 return MaterialPageRoute(
                     builder: (_) => ChangeLogPage(changeLog: _changeLog));
-              case DeviceMgmt.routeName:
-                return MaterialPageRoute(builder: (_) => const DeviceMgmt());
               default:
-                return MaterialPageRoute(builder: (_) => const Dashboard());
+                return MaterialPageRoute(
+                    builder: (_) => Dashboard(devices: _devices));
             }
           },
           home: Scaffold(
@@ -83,8 +96,8 @@ class _MyAppState extends State<MyApp> {
             body: IndexedStack(
               index: currentPageIndex,
               children: [
-                const Dashboard(),
-                const DeviceMgmt(),
+                Dashboard(devices: _devices),
+                DeviceMgmt(devices: _devices),
                 ChangeLogPage(changeLog: _changeLog),
                 ChangeLogPage(changeLog: _changeLog),
                 SettingsView(
@@ -97,30 +110,32 @@ class _MyAppState extends State<MyApp> {
               onItemSelected: (index) async {
                 switch (index) {
                   case 0:
-                    //get devices
+                    var newDevices = await _fetchDevices();
                     setState(() {
                       currentPageIndex = index;
+                      _devices = Future.value(newDevices);
                     });
                     break;
                   case 1:
-                    //get devices
+                    var newDevices = await _fetchDevices();
                     setState(() {
                       currentPageIndex = index;
+                      _devices = Future.value(newDevices);
                     });
                     break;
                   case 2:
-                    //get routines
-                    final newLogs = await _fetchChangeLogs();
+                    //TODO: get routines
+                    var newChangeLogs = await _fetchChangeLogs();
                     setState(() {
                       currentPageIndex = index;
-                      _changeLog = Future.value(newLogs);
+                      _changeLog = Future.value(newChangeLogs);
                     });
                     break;
                   case 3:
-                    final newLogs = await _fetchChangeLogs();
+                    var newChangeLogs = await _fetchChangeLogs();
                     setState(() {
                       currentPageIndex = index;
-                      _changeLog = Future.value(newLogs);
+                      _changeLog = Future.value(newChangeLogs);
                     });
                     break;
                   default:

@@ -3,137 +3,108 @@ import '../../models/device.dart';
 import '../../services/device_service.dart';
 import 'device_form.dart';
 
-class DeviceMgmt extends StatefulWidget {
-  const DeviceMgmt({super.key});
+class DeviceMgmt extends StatelessWidget {
+  DeviceMgmt({super.key, required this.devices});
   static const routeName = '/devices';
-  @override
-  State<DeviceMgmt> createState() => _DeviceMgmtState();
-}
+  final Future<List<Device>>? devices;
 
-class _DeviceMgmtState extends State<DeviceMgmt> {
   final DeviceService _deviceService = DeviceService();
-  List<Device> _devices = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchDevices();
-  }
-
-  Future<void> _fetchDevices() async {
-    var devices = await _deviceService.fetchDevices();
-    setState(() {
-      _devices = devices;
-    });
-  }
 
   Future<void> _addDevice(Device newDevice) async {
-    var oldDevices = _devices;
-    setState(() {
-      _devices.add(newDevice);
-    });
-
     try {
-      var devices = await _deviceService.addDevice(newDevice);
-      setState(() {
-        _devices = devices;
-      });
+      // Add device through the service
+      var newDevices = await _deviceService.addDevice(newDevice);
+      // You should notify the parent widget to refresh the list of devices
     } catch (e) {
-      setState(() {
-        _devices = oldDevices;
-      });
-      debugPrint('Error editing device: $e');
+      debugPrint('Error adding device: $e');
     }
   }
 
   Future<void> _editDevice(Device newDevice) async {
-    setState(() {
-      _devices = _devices.map((d) {
-        if (d.id == newDevice.id) {
-          return newDevice;
-        }
-        return d;
-      }).toList();
-    });
-
     try {
-      var devices = await _deviceService.editDevice(newDevice);
-      setState(() {
-        _devices = devices;
-      });
+      // Edit device through the service
+      var newDevices = await _deviceService.editDevice(newDevice);
+      // You should notify the parent widget to refresh the list of devices
     } catch (e) {
-      setState(() {
-        _devices = _devices;
-      });
       debugPrint('Error editing device: $e');
     }
   }
 
   Future<void> _deleteDevice(int id) async {
-    setState(() {
-      _devices = _devices.where((d) => d.id != id).toList();
-    });
-
     try {
-      var devices = await _deviceService.deleteDevice(id);
-      setState(() {
-        _devices = devices;
-      });
+      // Delete device through the service
+      var newDevices = await _deviceService.deleteDevice(id);
+      // You should notify the parent widget to refresh the list of devices
     } catch (e) {
-      setState(() {
-        _devices = _devices;
-      });
+      debugPrint('Error deleting device: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.separated(
-        itemCount: _devices.length,
-        itemBuilder: (context, index) {
-          var device = _devices[index];
-          return ListTile(
-            title: Text(device.name),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit_outlined),
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (BuildContext modalContext) {
-                        return Padding(
-                          padding: MediaQuery.of(modalContext).viewInsets,
-                          child: DeviceForm(
-                            device: device,
-                            onAdd: (deviceData) async {},
-                            onEdit: (deviceData) async {
-                              final navigator = Navigator.of(modalContext);
-                              await _editDevice(deviceData);
-                              if (mounted) {
-                                navigator.pop();
-                              }
+      body: FutureBuilder<List<Device>>(
+        future: devices, // Using Future passed down to the widget
+        builder: (BuildContext context, AsyncSnapshot<List<Device>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No devices available.'));
+          } else {
+            final deviceList = snapshot.data!;
+
+            return ListView.separated(
+              itemCount: deviceList.length,
+              itemBuilder: (context, index) {
+                var device = deviceList[index];
+                return ListTile(
+                  title: Text(device.name),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined),
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (BuildContext modalContext) {
+                              return Padding(
+                                padding: MediaQuery.of(modalContext).viewInsets,
+                                child: DeviceForm(
+                                  device: device,
+                                  onAdd: (deviceData) async {},
+                                  onEdit: (deviceData) async {
+                                    final navigator =
+                                        Navigator.of(modalContext);
+                                    await _editDevice(deviceData);
+                                    if (navigator.canPop()) {
+                                      navigator.pop();
+                                    }
+                                  },
+                                ),
+                              );
                             },
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete_outlined, color: Colors.red),
-                  onPressed: () {
-                    _deleteDevice(device.id);
-                  },
-                ),
-              ],
-            ),
-          );
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outlined,
+                            color: Colors.red),
+                        onPressed: () {
+                          _deleteDevice(device.id);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => const Divider(),
+            );
+          }
         },
-        separatorBuilder: (context, index) => const Divider(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -144,22 +115,21 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
               return Padding(
                 padding: MediaQuery.of(context).viewInsets,
                 child: DeviceForm(
-                    onEdit: (deviceData) async {},
-                    onAdd: (deviceData) async {
-                      final navigator = Navigator.of(context);
-                      await _addDevice(deviceData);
-                      navigator.pop();
-                      _fetchDevices();
-                    }),
+                  onEdit: (deviceData) async {},
+                  onAdd: (deviceData) async {
+                    final navigator = Navigator.of(context);
+                    await _addDevice(deviceData);
+                    navigator.pop();
+                  },
+                ),
               );
             },
           );
         },
         tooltip: 'Add Device',
-        backgroundColor: Colors.blue, // Set background color for the FAB
+        backgroundColor: Colors.blue,
         shape: const CircleBorder(),
-        child: const Icon(Icons.add,
-            color: Colors.white), // Set background color directly on the FAB
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

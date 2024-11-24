@@ -3,65 +3,50 @@ import '../services/device_service.dart';
 import '../models/device.dart';
 import 'devices/device_grid.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+class Dashboard extends StatelessWidget {
+  const Dashboard({super.key, required this.devices});
   static const routeName = '/';
-  @override
-  State<Dashboard> createState() => _DashboardState();
-}
+  final Future<List<Device>>? devices;
 
-class _DashboardState extends State<Dashboard> {
-  final DeviceService _deviceService = DeviceService();
-  List<Device> _devices = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchDevices();
-  }
-
-  Future<void> _fetchDevices() async {
-    var devices = await _deviceService.fetchDevices();
-    setState(() {
-      _devices = devices;
-    });
-  }
-
-  Future<void> _toggleDevice(Device device, bool toOn) async {
-    setState(() {
-      _devices = _devices.map((d) {
-        if (d.id == device.id) {
-          return Device(
-            id: d.id,
-            name: d.name,
-            type: d.type,
-            isOn: toOn,
-          );
-        }
-        return d;
-      }).toList();
-    });
-
+  Future<void> _toggleDevice(Device device, bool toOn, DeviceService deviceService) async {
     try {
-      var devices = await _deviceService.toggleDevice(device, toOn);
-      setState(() {
-        _devices = devices;
-      });
+      deviceService.toggleDevice(device, toOn);
+      // var updatedDevices = await _deviceService.toggleDevice(device, toOn);
+      // Since it's a StatelessWidget, the updated devices would need to be passed down as new data
+      // No need to use setState here, instead pass updated data from parent
     } catch (e) {
-      setState(() {
-        _devices = _devices;
-      });
-      debugPrint('Error deleting device: $e');
+      debugPrint('Error toggling device: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DeviceGrid(
-          devices: _devices,
-          onRefresh: _fetchDevices,
-          toggleDevice: _toggleDevice),
+      body: FutureBuilder<List<Device>>(
+        future: devices, // The devices Future passed to the widget
+        builder: (BuildContext context, AsyncSnapshot<List<Device>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No devices available.'));
+          } else {
+            return DeviceGrid(
+              devices: snapshot.data!,
+              onRefresh: () {
+                // The logic for refreshing devices will now have to happen outside of this widget
+                // In a parent widget that can trigger a rebuild with new data
+              },
+              toggleDevice: (device, toOn) {
+                // Call the toggleDevice function here with the necessary service
+                final _deviceService = DeviceService();  // Assuming DeviceService is a singleton or can be instantiated
+                _toggleDevice(device, toOn, _deviceService);
+              },
+            );
+          }
+        },
+      ),
     );
   }
 }
