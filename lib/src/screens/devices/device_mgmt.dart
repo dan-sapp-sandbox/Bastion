@@ -4,8 +4,9 @@ import '../../services/device_service.dart';
 import 'device_form.dart';
 
 class DeviceMgmt extends StatefulWidget {
-  const DeviceMgmt({super.key});
+  const DeviceMgmt({super.key, required this.index});
   static const routeName = '/devices';
+  final int index;
 
   @override
   State<DeviceMgmt> createState() => _DeviceMgmtState();
@@ -21,12 +22,20 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
     _fetchDevices();
   }
 
+  @override
+  void didUpdateWidget(covariant DeviceMgmt oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.index == 1) {
+      _fetchDevices();
+    }
+  }
+
   Future<void> _fetchDevices() async {
     var devices = await _deviceService.fetchDevices();
     updateDevices(devices);
   }
 
-  void updateDevices(devices) {
+  void updateDevices(List<Device> devices) {
     setState(() {
       _devices = Future.value(devices);
     });

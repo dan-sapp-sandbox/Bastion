@@ -61,7 +61,8 @@ class _MyAppState extends State<MyApp> {
                   builder: (_) => Dashboard(index: currentPageIndex),
                 );
               case DeviceMgmt.routeName:
-                return MaterialPageRoute(builder: (_) => const DeviceMgmt());
+                return MaterialPageRoute(
+                    builder: (_) => DeviceMgmt(index: currentPageIndex));
               case ChangeLogPage.routeName:
                 return MaterialPageRoute(builder: (_) => const ChangeLogPage());
               default:
@@ -79,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                   index: currentPageIndex,
                   children: [
                     Dashboard(index: currentPageIndex),
-                    const DeviceMgmt(),
+                    DeviceMgmt(index: currentPageIndex),
                     const ChangeLogPage(),
                     const ChangeLogPage(),
                     SettingsView(

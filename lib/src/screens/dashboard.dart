@@ -25,9 +25,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   void didUpdateWidget(covariant Dashboard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Check if index has changed
-    if (widget.index != oldWidget.index) {
-      _fetchDevices();  // Trigger the device fetch on index change
+    if (widget.index == 0) {
+      _fetchDevices();
     }
   }
 
