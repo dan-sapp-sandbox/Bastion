@@ -28,7 +28,7 @@ class DeviceTile extends StatelessWidget {
       case 'camera':
         return Icons.videocam;
       default:
-        return Icons.device_unknown; // Default icon for unknown types
+        return Icons.device_unknown;
     }
   }
 
@@ -37,11 +37,10 @@ class DeviceTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: Colors.deepPurple.shade800, // Background color
-        borderRadius: BorderRadius.circular(10), // Rounded corners
+        color: Colors.deepPurple.shade800.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          // Border properties
-          color: Colors.deepPurple.shade800,
+          color: Colors.deepPurple.shade800.withOpacity(0.5),
           width: 1,
         ),
       ),
