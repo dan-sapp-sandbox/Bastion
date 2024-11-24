@@ -27,24 +27,43 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int currentPageIndex = 0;
+  bool _isLoading = false;
 
   final ChangeLogService _changeLogService = ChangeLogService();
   Future<List<ChangeLogEntry>>? _changeLog;
-  Future<List<ChangeLogEntry>> _fetchChangeLogs() async {
-    return await _changeLogService.fetchChangeLog();
-  }
 
   final DeviceService _deviceService = DeviceService();
   Future<List<Device>>? _devices;
-  Future<List<Device>> _fetchDevices() async {
-    return await _deviceService.fetchDevices();
-  }
 
   @override
   void initState() {
     super.initState();
     _changeLog = _fetchChangeLogs();
-    _devices = _fetchDevices();
+    _fetchDevices();
+  }
+
+  Future<List<ChangeLogEntry>> _fetchChangeLogs() async {
+    setState(() {
+      _isLoading = true;
+    });
+    var logs = await _changeLogService.fetchChangeLog();
+    setState(() {
+      _isLoading = false;
+    });
+    return logs;
+  }
+
+  Future<void> _fetchDevices() async {
+    var devices = await _deviceService.fetchDevices();
+    setState(() {
+      _devices = Future.value(devices);
+    });
+  }
+
+  void updateDevices(devices) {
+    setState(() {
+      _devices = Future.value(devices);
+    });
   }
 
   @override
@@ -76,73 +95,57 @@ class _MyAppState extends State<MyApp> {
                 );
               case Dashboard.routeName:
                 return MaterialPageRoute(
-                  builder: (_) => Dashboard(devices: _devices),
+                  builder: (_) =>
+                      Dashboard(devices: _devices, updateDevices: updateDevices),
                 );
               case DeviceMgmt.routeName:
                 return MaterialPageRoute(
-                    builder: (_) => DeviceMgmt(devices: _devices));
+                    builder: (_) =>
+                        DeviceMgmt(devices: _devices, updateDevices: updateDevices));
               case ChangeLogPage.routeName:
                 return MaterialPageRoute(
                     builder: (_) => ChangeLogPage(changeLog: _changeLog));
               default:
                 return MaterialPageRoute(
-                    builder: (_) => Dashboard(devices: _devices));
+                    builder: (_) =>
+                        Dashboard(devices: _devices, updateDevices: updateDevices));
             }
           },
           home: Scaffold(
             appBar: AppBar(
               title: const Text('Bastion', style: TextStyle(fontSize: 32)),
             ),
-            body: IndexedStack(
-              index: currentPageIndex,
+            body: Stack(
               children: [
-                Dashboard(devices: _devices),
-                DeviceMgmt(devices: _devices),
-                ChangeLogPage(changeLog: _changeLog),
-                ChangeLogPage(changeLog: _changeLog),
-                SettingsView(
-                  controller: widget.settingsController,
+                IndexedStack(
+                  index: currentPageIndex,
+                  children: [
+                    Dashboard(devices: _devices, updateDevices: updateDevices),
+                    DeviceMgmt(devices: _devices, updateDevices: updateDevices),
+                    ChangeLogPage(changeLog: _changeLog),
+                    ChangeLogPage(changeLog: _changeLog),
+                    SettingsView(
+                      controller: widget.settingsController,
+                    ),
+                  ],
                 ),
+                if (_isLoading) // Display loading indicator when loading
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  ),
               ],
             ),
             bottomNavigationBar: BottomNavBar(
               currentIndex: currentPageIndex,
               onItemSelected: (index) async {
-                switch (index) {
-                  case 0:
-                    var newDevices = await _fetchDevices();
-                    setState(() {
-                      currentPageIndex = index;
-                      _devices = Future.value(newDevices);
-                    });
-                    break;
-                  case 1:
-                    var newDevices = await _fetchDevices();
-                    setState(() {
-                      currentPageIndex = index;
-                      _devices = Future.value(newDevices);
-                    });
-                    break;
-                  case 2:
-                    //TODO: get routines
-                    var newChangeLogs = await _fetchChangeLogs();
-                    setState(() {
-                      currentPageIndex = index;
-                      _changeLog = Future.value(newChangeLogs);
-                    });
-                    break;
-                  case 3:
-                    var newChangeLogs = await _fetchChangeLogs();
-                    setState(() {
-                      currentPageIndex = index;
-                      _changeLog = Future.value(newChangeLogs);
-                    });
-                    break;
-                  default:
-                    setState(() {
-                      currentPageIndex = index;
-                    });
+                if (index == 0 || index == 1) {
+                  _fetchDevices();
+                } else if (index == 2 || index == 3) {
+                  _changeLog = _fetchChangeLogs();
                 }
+                setState(() {
+                  currentPageIndex = index;
+                });
               },
             ),
           ),

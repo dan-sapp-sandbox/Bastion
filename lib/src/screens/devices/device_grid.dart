@@ -4,10 +4,9 @@ import '../../widgets/device_tile.dart';
 
 class DeviceGrid extends StatelessWidget {
   final List<Device> devices;
-  final Function onRefresh;
   final Function toggleDevice;
 
-  const DeviceGrid({super.key, required this.devices, required this.onRefresh, required this.toggleDevice});
+  const DeviceGrid({super.key, required this.devices, required this.toggleDevice});
 
   @override
   Widget build(BuildContext context) {

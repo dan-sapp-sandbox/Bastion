@@ -4,40 +4,25 @@ import '../../services/device_service.dart';
 import 'device_form.dart';
 
 class DeviceMgmt extends StatelessWidget {
-  DeviceMgmt({super.key, required this.devices});
+  DeviceMgmt({super.key, required this.devices, required this.updateDevices});
   static const routeName = '/devices';
   final Future<List<Device>>? devices;
-
   final DeviceService _deviceService = DeviceService();
+  final Function(List<Device>) updateDevices;
 
   Future<void> _addDevice(Device newDevice) async {
-    try {
-      // Add device through the service
-      var newDevices = await _deviceService.addDevice(newDevice);
-      // You should notify the parent widget to refresh the list of devices
-    } catch (e) {
-      debugPrint('Error adding device: $e');
-    }
+    var newDevices = await _deviceService.addDevice(newDevice);
+    updateDevices(newDevices);
   }
 
   Future<void> _editDevice(Device newDevice) async {
-    try {
-      // Edit device through the service
-      var newDevices = await _deviceService.editDevice(newDevice);
-      // You should notify the parent widget to refresh the list of devices
-    } catch (e) {
-      debugPrint('Error editing device: $e');
-    }
+    var newDevices = await _deviceService.editDevice(newDevice);
+    updateDevices(newDevices);
   }
 
   Future<void> _deleteDevice(int id) async {
-    try {
-      // Delete device through the service
-      var newDevices = await _deviceService.deleteDevice(id);
-      // You should notify the parent widget to refresh the list of devices
-    } catch (e) {
-      debugPrint('Error deleting device: $e');
-    }
+    var newDevices = await _deviceService.deleteDevice(id);
+    updateDevices(newDevices);
   }
 
   @override
