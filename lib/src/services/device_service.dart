@@ -27,7 +27,7 @@ class DeviceService {
       var resData = json.decode(response.body)["data"] as List;
       return resData.map((i) => Device.fromJSON(i)).toList();
     } else {
-      throw Exception('Failed to load devices');
+      throw Exception('Failed to add device');
     }
   }
 
@@ -41,7 +41,7 @@ class DeviceService {
       var resData = json.decode(response.body)["data"] as List;
       return resData.map((i) => Device.fromJSON(i)).toList();
     } else {
-      throw Exception('Failed to load devices');
+      throw Exception('Failed to edit device');
     }
   }
 
@@ -60,17 +60,17 @@ class DeviceService {
       var resData = json.decode(response.body)["data"] as List;
       return resData.map((i) => Device.fromJSON(i)).toList();
     } else {
-      throw Exception('Failed to load devices');
+      throw Exception('Failed to toggle device');
     }
   }
 
   Future<List<Device>> deleteDevice(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       var resData = json.decode(response.body)["data"] as List;
       return resData.map((i) => Device.fromJSON(i)).toList();
     } else {
-      throw Exception('Failed to load devices');
+      throw Exception('Failed to delete device');
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/change_log.dart';
 import 'package:intl/intl.dart';
 import '../../services/change_log_service.dart';
+import 'change_log_row.dart';
 
 class ChangeLogPage extends StatefulWidget {
   const ChangeLogPage({super.key});
@@ -61,26 +62,8 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
               final formattedDate =
                   DateFormat.yMMMd().add_jm().format(parsedDate);
 
-              return ListTile(
-                title: Row(
-                  children: [
-                    const Icon(Icons.history, color: Colors.blue),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            formattedDate,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(changeLog.change),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return ChangeLogRow(
+                  formattedDate: formattedDate, text: changeLog.change);
             },
             separatorBuilder: (context, index) => const Divider(
               color: Colors.grey,

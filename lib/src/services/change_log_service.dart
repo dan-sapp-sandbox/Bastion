@@ -13,7 +13,7 @@ class ChangeLogService {
       var resData = json.decode(response.body)["data"] as List;
       return resData.map((i) => ChangeLogEntry.fromJSON(i)).toList();
     } else {
-      throw Exception('Failed to load devices');
+      throw Exception('Failed to load change log');
     }
   }
 }
