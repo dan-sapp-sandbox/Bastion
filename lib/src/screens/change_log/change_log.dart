@@ -1,35 +1,20 @@
 import 'package:flutter/material.dart';
-import '../models/change_log.dart';
-import '../services/change_log_service.dart';
+import '../../models/change_log.dart';
 import 'package:intl/intl.dart';
 
 class ChangeLogPage extends StatefulWidget {
-  const ChangeLogPage({super.key});
-
+  const ChangeLogPage({super.key, required this.changeLog});
+  static const routeName = '/change-log';
+  final Future<List<ChangeLogEntry>>? changeLog;
   @override
   State<ChangeLogPage> createState() => _ChangeLogPageState();
 }
 
 class _ChangeLogPageState extends State<ChangeLogPage> {
-  final ChangeLogService _changeLogService = ChangeLogService();
-  int currentPageIndex = 0;
-
-  late Future<List<ChangeLogEntry>> _changeLog;
-
-  @override
-  void initState() {
-    super.initState();
-    _changeLog = _fetchChangeLogs();
-  }
-
-  Future<List<ChangeLogEntry>> _fetchChangeLogs() async {
-    return await _changeLogService.fetchChangeLog();
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ChangeLogEntry>>(
-      future: _changeLog,
+      future: widget.changeLog,
       builder:
           (BuildContext context, AsyncSnapshot<List<ChangeLogEntry>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -54,7 +39,9 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
             itemBuilder: (context, index) {
               final changeLog = changeLogs[index];
 
-              final parsedDate = DateTime.parse(changeLog.timestamp);
+              final unixTimestamp = int.parse(changeLog.timestamp);
+              final parsedDate =
+                  DateTime.fromMillisecondsSinceEpoch(unixTimestamp).toLocal();
               final formattedDate =
                   DateFormat.yMMMd().add_jm().format(parsedDate);
 

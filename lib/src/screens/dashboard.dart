@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/device_service.dart';
 import '../models/device.dart';
-import 'device_grid.dart';
+import 'devices/device_grid.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});

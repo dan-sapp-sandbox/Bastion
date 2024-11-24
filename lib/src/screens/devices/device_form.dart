@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/device.dart';
+import '../../models/device.dart';
 
 class DeviceForm extends StatefulWidget {
   final Function(Device) onAdd;

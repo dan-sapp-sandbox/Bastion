@@ -3,11 +3,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/dashboard.dart';
-import 'screens/device_mgmt.dart';
-import 'screens/change_log_wrapper.dart';
+import 'screens/devices/device_mgmt.dart';
+import 'screens/change_log/change_log.dart';
 import 'widgets/bottom_nav_bar.dart';
-import 'settings/settings_controller.dart';
-import 'settings/settings_view.dart';
+import 'screens/settings/settings_controller.dart';
+import 'screens/settings/settings_view.dart';
+import 'models/change_log.dart';
+import 'services/change_log_service.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -22,7 +24,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    _changeLog = _fetchChangeLogs();
+  }
+
   int currentPageIndex = 0;
+
+  final ChangeLogService _changeLogService = ChangeLogService();
+  Future<List<ChangeLogEntry>>? _changeLog;
+  Future<List<ChangeLogEntry>> _fetchChangeLogs() async {
+    return await _changeLogService.fetchChangeLog();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +52,7 @@ class _MyAppState extends State<MyApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: const [Locale('en', '')],
-          onGenerateTitle: (BuildContext context) =>
-              AppLocalizations.of(context)!.appTitle,
+          onGenerateTitle: (BuildContext context) => 'Bastion',
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
           themeMode: widget.settingsController.themeMode,
@@ -54,8 +67,9 @@ class _MyAppState extends State<MyApp> {
                 );
               case Dashboard.routeName:
                 return MaterialPageRoute(builder: (_) => const Dashboard());
-              case ChangeLog.routeName:
-                return MaterialPageRoute(builder: (_) => const ChangeLog());
+              case ChangeLogPage.routeName:
+                return MaterialPageRoute(
+                    builder: (_) => ChangeLogPage(changeLog: _changeLog));
               case DeviceMgmt.routeName:
                 return MaterialPageRoute(builder: (_) => const DeviceMgmt());
               default:
@@ -71,8 +85,8 @@ class _MyAppState extends State<MyApp> {
               children: [
                 const Dashboard(),
                 const DeviceMgmt(),
-                const ChangeLog(),
-                const ChangeLog(),
+                ChangeLogPage(changeLog: _changeLog),
+                ChangeLogPage(changeLog: _changeLog),
                 SettingsView(
                   controller: widget.settingsController,
                 ),
@@ -80,10 +94,40 @@ class _MyAppState extends State<MyApp> {
             ),
             bottomNavigationBar: BottomNavBar(
               currentIndex: currentPageIndex,
-              onItemSelected: (index) {
-                setState(() {
-                  currentPageIndex = index;
-                });
+              onItemSelected: (index) async {
+                switch (index) {
+                  case 0:
+                    //get devices
+                    setState(() {
+                      currentPageIndex = index;
+                    });
+                    break;
+                  case 1:
+                    //get devices
+                    setState(() {
+                      currentPageIndex = index;
+                    });
+                    break;
+                  case 2:
+                    //get routines
+                    final newLogs = await _fetchChangeLogs();
+                    setState(() {
+                      currentPageIndex = index;
+                      _changeLog = Future.value(newLogs);
+                    });
+                    break;
+                  case 3:
+                    final newLogs = await _fetchChangeLogs();
+                    setState(() {
+                      currentPageIndex = index;
+                      _changeLog = Future.value(newLogs);
+                    });
+                    break;
+                  default:
+                    setState(() {
+                      currentPageIndex = index;
+                    });
+                }
               },
             ),
           ),

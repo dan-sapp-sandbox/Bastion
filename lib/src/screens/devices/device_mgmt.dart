@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/device.dart';
-import '../services/device_service.dart';
+import '../../models/device.dart';
+import '../../services/device_service.dart';
 import 'device_form.dart';
 
 class DeviceMgmt extends StatefulWidget {
@@ -127,7 +127,6 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                   icon: const Icon(Icons.delete_outlined, color: Colors.red),
                   onPressed: () {
                     _deleteDevice(device.id);
-                    _fetchDevices();
                   },
                 ),
               ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/device.dart';
-import '../widgets/device_tile.dart';
+import '../../models/device.dart';
+import '../../widgets/device_tile.dart';
 
 class DeviceGrid extends StatelessWidget {
   final List<Device> devices;
