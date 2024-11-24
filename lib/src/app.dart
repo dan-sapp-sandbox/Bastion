@@ -65,23 +65,17 @@ class _MyAppState extends State<MyApp> {
           home: Scaffold(
             appBar: AppBar(
               title: const Text('Bastion', style: TextStyle(fontSize: 32)),
-              actions: [
-                Builder(
-                  builder: (context) => IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.pushNamed(context, SettingsView.routeName);
-                    },
-                  ),
-                ),
-              ],
             ),
             body: IndexedStack(
               index: currentPageIndex,
-              children: const [
-                Dashboard(),
-                ChangeLog(),
-                DeviceMgmt(),
+              children: [
+                const Dashboard(),
+                const DeviceMgmt(),
+                const ChangeLog(),
+                const ChangeLog(),
+                SettingsView(
+                  controller: widget.settingsController,
+                ),
               ],
             ),
             bottomNavigationBar: BottomNavBar(

@@ -5,7 +5,7 @@ import 'device_form.dart';
 
 class DeviceMgmt extends StatefulWidget {
   const DeviceMgmt({super.key});
-  static const routeName = '/device-mgmt';
+  static const routeName = '/devices';
   @override
   State<DeviceMgmt> createState() => _DeviceMgmtState();
 }
@@ -148,7 +148,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                     onEdit: (deviceData) async {},
                     onAdd: (deviceData) async {
                       final navigator = Navigator.of(context);
-                      await _deviceService.addDevice(deviceData);
+                      await _addDevice(deviceData);
                       navigator.pop();
                       _fetchDevices();
                     }),

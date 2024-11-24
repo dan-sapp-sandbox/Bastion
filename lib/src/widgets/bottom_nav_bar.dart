@@ -23,12 +23,20 @@ class BottomNavBar extends StatelessWidget {
           label: 'Dashboard',
         ),
         NavigationDestination(
-          icon: Icon(Icons.history),
-          label: 'Changelog',
+          icon: Icon(Icons.devices),
+          label: 'Devices',
         ),
         NavigationDestination(
-          icon: Icon(Icons.devices),
-          label: 'Device Mgmt',
+          icon: Icon(Icons.schedule),
+          label: 'Routines',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.list_alt),
+          label: 'Event Log',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.settings),
+          label: 'Settings',
         ),
       ],
     );
