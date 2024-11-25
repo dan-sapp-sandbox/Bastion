@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter/foundation.dart';
-import '../models/device.dart';
+import '../models/change_log.dart';
 
-class WebSocketService with ChangeNotifier {
+class ChangeLogWebSocketService with ChangeNotifier {
   late WebSocketChannel _channel;
-  final List<Device> _devices = [];
+  final List<ChangeLogEntry> _changeLogs = [];
 
-  List<Device> get devices => _devices;
+  List<ChangeLogEntry> get changeLogs => _changeLogs;
 
   void connect(String url) {
     try {
@@ -21,7 +21,7 @@ class WebSocketService with ChangeNotifier {
     _channel.stream.listen(
       (message) {
         final data = json.decode(message);
-        updateDeviceList(data['devices']);
+        updateChangeLogList(data);
       },
       onError: (error) {
         debugPrint('WebSocket Error: $error');
@@ -32,9 +32,9 @@ class WebSocketService with ChangeNotifier {
     );
   }
 
-  void updateDeviceList(List<dynamic> newDevices) {
-    _devices.clear();
-    _devices.addAll(newDevices.map((device) => Device.fromJSON(device)));
+  void updateChangeLogList(List<dynamic> newChangeLogs) {
+    _changeLogs.clear();
+    _changeLogs.addAll(newChangeLogs.map((log) => ChangeLogEntry.fromJSON(log)));
     notifyListeners();
   }
 

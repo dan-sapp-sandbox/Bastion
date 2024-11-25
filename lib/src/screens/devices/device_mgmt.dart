@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/device.dart';
 import '../../services/device_service.dart';
-import '../../services/websocket_service.dart';
+import '../../services/device_websocket_service.dart';
 import 'device_form.dart';
 
 class DeviceMgmt extends StatefulWidget {
@@ -52,7 +52,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
 
   @override
   Widget build(BuildContext context) {
-    final webSocketService = Provider.of<WebSocketService>(context);
+    final webSocketService = Provider.of<DeviceWebSocketService>(context);
 
     return Scaffold(
       body: webSocketService.devices.isEmpty

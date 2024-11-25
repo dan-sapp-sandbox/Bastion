@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../services/websocket_service.dart';
+import '../../services/device_websocket_service.dart';
 import 'device_grid.dart';
 
 class Dashboard extends StatefulWidget {
@@ -14,8 +14,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    final webSocketService = Provider.of<WebSocketService>(context);
-
+    final webSocketService = Provider.of<DeviceWebSocketService>(context);
     return Scaffold(
       body: DeviceGrid(devices: webSocketService.devices),
     );
