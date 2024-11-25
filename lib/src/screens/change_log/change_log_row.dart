@@ -5,12 +5,27 @@ class ChangeLogRow extends StatelessWidget {
       {super.key, required this.formattedDate, required this.text});
 
   final String formattedDate, text;
+  final String changeType = "add";
+
+  Icon _getIconForDeviceType(String type) {
+    switch (type) {
+      case 'add':
+        return const Icon(Icons.add_circle_outline, color: Colors.green);
+      case 'edit':
+        return const Icon(Icons.add_circle_outline, color: Colors.blue);
+      case 'delete':
+        return const Icon(Icons.add_circle_outline, color: Colors.red);
+      default:
+        return const Icon(Icons.add_circle_outline, color: Colors.blue);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Row(
         children: [
-          const Icon(Icons.add_circle_outline, color: Colors.blue),
+          _getIconForDeviceType(changeType),
           const SizedBox(width: 10),
           Expanded(
             child: Column(

@@ -59,8 +59,20 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
               final unixTimestamp = int.parse(changeLog.timestamp);
               final parsedDate =
                   DateTime.fromMillisecondsSinceEpoch(unixTimestamp).toLocal();
-              final formattedDate =
-                  DateFormat.yMMMd().add_jm().format(parsedDate);
+
+              final now = DateTime.now();
+              final todayStart = DateTime(now.year, now.month, now.day);
+              final todayEnd = todayStart.add(const Duration(days: 1));
+
+              final isToday = parsedDate.isAfter(todayStart) &&
+                  parsedDate.isBefore(todayEnd);
+
+              String formattedDate;
+              if (isToday) {
+                formattedDate = 'Today ${DateFormat.jm().format(parsedDate)}';
+              } else {
+                formattedDate = DateFormat.yMMMd().add_jm().format(parsedDate);
+              }
 
               return ChangeLogRow(
                   formattedDate: formattedDate, text: changeLog.change);
