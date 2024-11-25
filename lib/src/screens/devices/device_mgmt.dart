@@ -25,8 +25,17 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
   @override
   void didUpdateWidget(covariant DeviceMgmt oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.index == 1) {
-      _fetchDevices();
+    if (widget.index == 1 && oldWidget.index != 1) {
+      _fetchDevicesAndCompare();
+    }
+  }
+
+  Future<void> _fetchDevicesAndCompare() async {
+    final newDevices = await _deviceService.fetchDevices();
+
+    final currentDevices = await _devices;
+    if (currentDevices == null || newDevices.length != currentDevices.length) {
+      updateDevices(newDevices);
     }
   }
 

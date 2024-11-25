@@ -25,8 +25,17 @@ class _DashboardState extends State<Dashboard> {
   @override
   void didUpdateWidget(covariant Dashboard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.index == 0) {
-      _fetchDevices();
+    if (widget.index == 1 && oldWidget.index != 1) {
+      _fetchDevicesAndCompare();
+    }
+  }
+
+  Future<void> _fetchDevicesAndCompare() async {
+    final newDevices = await _deviceService.fetchDevices();
+
+    final currentDevices = await _devices;
+    if (currentDevices == null || newDevices.length != currentDevices.length) {
+      updateDevices(newDevices);
     }
   }
 
@@ -42,8 +51,24 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _toggleDevice(Device device, bool toOn) async {
-    var updatedDevices = await _deviceService.toggleDevice(device, toOn);
-    updateDevices(updatedDevices);
+    final currentDevices = await _devices;
+    if (currentDevices == null) return;
+    final optimisticallyUpdatedDevices = currentDevices.map((d) {
+      if (d.id == device.id) {
+        return Device(
+          id: d.id,
+          name: d.name,
+          type: d.type,
+          isOn: toOn,
+        );
+      }
+      return d;
+    }).toList();
+
+    updateDevices(optimisticallyUpdatedDevices);
+
+    await _deviceService.toggleDevice(device, toOn);
+    // TODO: Handle fail case
   }
 
   @override
