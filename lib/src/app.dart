@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'screens/dashboard.dart';
+import 'screens/dashboard/dashboard.dart';
 import 'screens/devices/device_mgmt.dart';
 import 'screens/change_log/change_log.dart';
 import 'widgets/bottom_nav_bar.dart';

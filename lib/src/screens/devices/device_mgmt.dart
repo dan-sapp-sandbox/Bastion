@@ -56,6 +56,14 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
     updateDevices(newDevices);
   }
 
+  Map<String, List<Device>> _groupDevicesByType(List<Device> devices) {
+    final Map<String, List<Device>> groupedDevices = {};
+    for (var device in devices) {
+      groupedDevices.putIfAbsent(device.type, () => []).add(device);
+    }
+    return groupedDevices;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,54 +78,72 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
             return const Center(child: Text('No devices available.'));
           } else {
             final deviceList = snapshot.data!;
+            final groupedDevices = _groupDevicesByType(deviceList);
 
-            return ListView.separated(
-              itemCount: deviceList.length,
-              itemBuilder: (context, index) {
-                var device = deviceList[index];
-                return ListTile(
-                  title: Text(device.name),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit_outlined),
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (BuildContext modalContext) {
-                              return Padding(
-                                padding: MediaQuery.of(modalContext).viewInsets,
-                                child: DeviceForm(
-                                  device: device,
-                                  onAdd: (deviceData) async {},
-                                  onEdit: (deviceData) async {
-                                    final navigator =
-                                        Navigator.of(modalContext);
-                                    await _editDevice(deviceData);
-                                    if (navigator.canPop()) {
-                                      navigator.pop();
-                                    }
+            return ListView(
+              children: groupedDevices.entries.map((entry) {
+                final type = entry.key;
+                final devices = entry.value;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(type,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    ...devices.map((device) {
+                      return ListTile(
+                        title: Text(device.name),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (BuildContext modalContext) {
+                                    return Padding(
+                                      padding: MediaQuery.of(modalContext)
+                                          .viewInsets,
+                                      child: DeviceForm(
+                                        device: device,
+                                        onAdd: (deviceData) async {},
+                                        onEdit: (deviceData) async {
+                                          final navigator =
+                                              Navigator.of(modalContext);
+                                          await _editDevice(deviceData);
+                                          if (navigator.canPop()) {
+                                            navigator.pop();
+                                          }
+                                        },
+                                      ),
+                                    );
                                   },
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete_outlined,
-                            color: Colors.red),
-                        onPressed: () {
-                          _deleteDevice(device.id);
-                        },
-                      ),
-                    ],
-                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outlined,
+                                  color: Colors.red),
+                              onPressed: () {
+                                _deleteDevice(device.id);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    const Divider(),
+                  ],
                 );
-              },
-              separatorBuilder: (context, index) => const Divider(),
+              }).toList(),
             );
           }
         },
