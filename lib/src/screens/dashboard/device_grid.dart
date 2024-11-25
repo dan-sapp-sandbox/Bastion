@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../models/device.dart';
 import 'device_tile.dart';
+import '../../services/device_service.dart';
 
 class DeviceGrid extends StatelessWidget {
   final List<Device> devices;
-  final Function toggleDevice;
 
-  const DeviceGrid({super.key, required this.devices, required this.toggleDevice});
+  DeviceGrid({super.key, required this.devices});
+
+  final DeviceService _deviceService = DeviceService();
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +25,8 @@ class DeviceGrid extends StatelessWidget {
         var device = devices[index];
         return DeviceTile(
           device: device,
-          onTurnOn: () => toggleDevice(device, true),
-          onTurnOff: () => toggleDevice(device, false),
+          onTurnOn: () => _deviceService.toggleDevice(device, true),
+          onTurnOff: () => _deviceService.toggleDevice(device, false),
         );
       },
     );

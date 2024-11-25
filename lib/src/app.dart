@@ -58,16 +58,16 @@ class _MyAppState extends State<MyApp> {
                 );
               case Dashboard.routeName:
                 return MaterialPageRoute(
-                  builder: (_) => Dashboard(index: currentPageIndex),
+                  builder: (_) => const Dashboard(),
                 );
               case DeviceMgmt.routeName:
                 return MaterialPageRoute(
-                    builder: (_) => DeviceMgmt(index: currentPageIndex));
+                    builder: (_) => const DeviceMgmt());
               case ChangeLogPage.routeName:
                 return MaterialPageRoute(builder: (_) => const ChangeLogPage());
               default:
                 return MaterialPageRoute(
-                    builder: (_) => Dashboard(index: currentPageIndex));
+                    builder: (_) => const Dashboard());
             }
           },
           home: Scaffold(
@@ -79,8 +79,8 @@ class _MyAppState extends State<MyApp> {
                 IndexedStack(
                   index: currentPageIndex,
                   children: [
-                    Dashboard(index: currentPageIndex),
-                    DeviceMgmt(index: currentPageIndex),
+                    const Dashboard(),
+                    const DeviceMgmt(),
                     const ChangeLogPage(),
                     const ChangeLogPage(),
                     SettingsView(

@@ -1,68 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/device.dart';
 import '../../services/device_service.dart';
+import '../../services/websocket_service.dart';
 import 'device_form.dart';
 
 class DeviceMgmt extends StatefulWidget {
-  const DeviceMgmt({super.key, required this.index});
+  const DeviceMgmt({super.key});
   static const routeName = '/devices';
-  final int index;
 
   @override
   State<DeviceMgmt> createState() => _DeviceMgmtState();
 }
 
 class _DeviceMgmtState extends State<DeviceMgmt> {
-  Future<List<Device>>? _devices;
   final DeviceService _deviceService = DeviceService();
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchDevices();
-  }
-
-  @override
-  void didUpdateWidget(covariant DeviceMgmt oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.index == 1 && oldWidget.index != 1) {
-      _fetchDevicesAndCompare();
-    }
-  }
-
-  Future<void> _fetchDevicesAndCompare() async {
-    final newDevices = await _deviceService.fetchDevices();
-
-    final currentDevices = await _devices;
-    if (currentDevices == null || newDevices.length != currentDevices.length) {
-      updateDevices(newDevices);
-    }
-  }
-
-  Future<void> _fetchDevices() async {
-    var devices = await _deviceService.fetchDevices();
-    updateDevices(devices);
-  }
-
-  void updateDevices(List<Device> devices) {
-    setState(() {
-      _devices = Future.value(devices);
-    });
-  }
-
   Future<void> _addDevice(Device newDevice) async {
-    var newDevices = await _deviceService.addDevice(newDevice);
-    updateDevices(newDevices);
+    await _deviceService.addDevice(newDevice);
   }
 
   Future<void> _editDevice(Device newDevice) async {
-    var newDevices = await _deviceService.editDevice(newDevice);
-    updateDevices(newDevices);
+    await _deviceService.editDevice(newDevice);
   }
 
   Future<void> _deleteDevice(int id) async {
-    var newDevices = await _deviceService.deleteDevice(id);
-    updateDevices(newDevices);
+    await _deviceService.deleteDevice(id);
   }
 
   Map<String, List<Device>> _groupDevicesByType(List<Device> devices) {
@@ -89,22 +52,15 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<List<Device>>(
-        future: _devices,
-        builder: (BuildContext context, AsyncSnapshot<List<Device>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No devices available.'));
-          } else {
-            final deviceList = snapshot.data!;
-            final groupedDevices = _groupDevicesByType(deviceList);
+    final webSocketService = Provider.of<WebSocketService>(context);
 
-            return ListView(
-              children: groupedDevices.entries.map((entry) {
+    return Scaffold(
+      body: webSocketService.devices.isEmpty
+          ? const Center(child: Text('No devices available.'))
+          : ListView(
+              children: _groupDevicesByType(webSocketService.devices)
+                  .entries
+                  .map((entry) {
                 final type = entry.key;
                 final devices = entry.value;
 
@@ -167,10 +123,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                   ],
                 );
               }).toList(),
-            );
-          }
-        },
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
