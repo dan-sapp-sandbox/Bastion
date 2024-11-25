@@ -73,6 +73,20 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
     return groupedDevices;
   }
 
+  String _getTitle(String type) {
+    if (type.isEmpty) return type;
+
+    const typeMap = {
+      'light': "Lights",
+      'fan': "Fans",
+      'lock': "Locks",
+      'sensor': "Sensors",
+      'camera': "Cameras",
+    };
+
+    return typeMap[type] ?? '${type[0].toUpperCase()}${type.substring(1)}s';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,7 +113,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(type,
+                      child: Text(_getTitle(type),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
