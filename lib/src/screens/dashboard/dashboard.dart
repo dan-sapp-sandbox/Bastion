@@ -13,8 +13,9 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  Future<List<Device>>? _devices;
-  final _deviceService = DeviceService();
+  List<Device> _devices = [];
+
+  final DeviceService _deviceService = DeviceService();
 
   @override
   void initState() {
@@ -30,29 +31,30 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  void updateDevices(devices) {
+    setState(() {
+      _devices = devices;
+    });
+  }
+
   Future<void> _fetchDevicesAndCompare() async {
     final newDevices = await _deviceService.fetchDevices();
 
-    final currentDevices = await _devices;
-    if (currentDevices == null || newDevices.length != currentDevices.length) {
+    final currentDevices = _devices;
+    if (newDevices.length != currentDevices.length) {
       updateDevices(newDevices);
     }
   }
 
   Future<void> _fetchDevices() async {
     var devices = await _deviceService.fetchDevices();
-    updateDevices(devices);
-  }
-
-  void updateDevices(devices) {
     setState(() {
-      _devices = Future.value(devices);
+      _devices = devices;
     });
   }
 
   Future<void> _toggleDevice(Device device, bool toOn) async {
-    final currentDevices = await _devices;
-    if (currentDevices == null) return;
+    final currentDevices = _devices;
     final optimisticallyUpdatedDevices = currentDevices.map((d) {
       if (d.id == device.id) {
         return Device(
@@ -74,22 +76,9 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<Device>>(
-        future: _devices,
-        builder: (BuildContext context, AsyncSnapshot<List<Device>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No devices available.'));
-          } else {
-            return DeviceGrid(
-              devices: snapshot.data!,
-              toggleDevice: _toggleDevice,
-            );
-          }
-        },
+      body: DeviceGrid(
+        devices: _devices,
+        toggleDevice: _toggleDevice,
       ),
     );
   }
