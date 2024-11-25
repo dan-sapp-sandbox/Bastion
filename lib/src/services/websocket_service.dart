@@ -12,9 +12,9 @@ class WebSocketService with ChangeNotifier {
   void connect(String url) {
     try {
       _channel = WebSocketChannel.connect(Uri.parse(url));
-      // debugPrint('WebSocket connection established to $url');
+      debugPrint('WebSocket connection established to $url');
     } catch (e) {
-      // debugPrint('Error while connecting to WebSocket: $e');
+      debugPrint('Error while connecting to WebSocket: $e');
       return;
     }
 
@@ -24,10 +24,10 @@ class WebSocketService with ChangeNotifier {
         updateDeviceList(data['devices']);
       },
       onError: (error) {
-        // debugPrint('WebSocket Error: $error');
+        debugPrint('WebSocket Error: $error');
       },
       onDone: () {
-        // debugPrint('WebSocket connection closed.');
+        debugPrint('WebSocket connection closed.');
       },
     );
   }

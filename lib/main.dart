@@ -13,7 +13,7 @@ void main() async{
   runApp(
     ChangeNotifierProvider(
       create: (_) {
-        return WebSocketService()..connect('ws://localhost:8080/devices/ws');
+        return WebSocketService()..connect('wss://bastion-server-951fbdb64d29.herokuapp.com/devices/ws');
       },
       child: MyApp(settingsController: settingsController),
     ),

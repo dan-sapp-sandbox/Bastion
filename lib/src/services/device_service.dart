@@ -5,7 +5,7 @@ import '../models/device.dart';
 class DeviceService {
   // final String baseUrl = 'http://localhost:8080';
   final String baseUrl =
-      'https://bastion-server-951fbdb64d29.herokuapp.com/devices';
+      'https://bastion-server-951fbdb64d29.herokuapp.com';
 
   Future<void> addDevice(Device device) async {
     await http.post(
