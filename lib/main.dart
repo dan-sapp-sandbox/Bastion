@@ -10,10 +10,12 @@ void main() async{
   final settingsController = SettingsController(SettingsService());
   await settingsController.loadSettings();
 
+  // var url = 'ws://localhost:8080/devices/ws';
+  var url = 'wss://bastion-server-951fbdb64d29.herokuapp.com/devices/ws';
   runApp(
     ChangeNotifierProvider(
       create: (_) {
-        return WebSocketService()..connect('wss://bastion-server-951fbdb64d29.herokuapp.com/devices/ws');
+        return WebSocketService()..connect(url);
       },
       child: MyApp(settingsController: settingsController),
     ),

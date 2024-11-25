@@ -40,7 +40,7 @@ class DeviceService {
   }
 
   Future<void> deleteDevice(int id) async {
-    await http.delete(Uri.parse('$baseUrl/edit-device/$id'));
+    await http.delete(Uri.parse('$baseUrl/delete-device/$id'));
     return;
   }
 }
