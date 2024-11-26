@@ -11,11 +11,11 @@ class ChangeLogRow extends StatelessWidget {
       case 'add':
         return const Icon(Icons.add_circle_outline, color: Colors.green);
       case 'edit':
-        return const Icon(Icons.add_circle_outline, color: Colors.blue);
+        return const Icon(Icons.edit_outlined, color: Colors.blue);
       case 'delete':
-        return const Icon(Icons.add_circle_outline, color: Colors.red);
+        return const Icon(Icons.delete_outline, color: Colors.red);
       default:
-        return const Icon(Icons.add_circle_outline, color: Colors.blue);
+        return const Icon(Icons.add_circle_outline, color: Colors.orange);
     }
   }
 
