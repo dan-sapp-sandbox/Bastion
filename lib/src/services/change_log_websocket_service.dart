@@ -21,6 +21,7 @@ class ChangeLogWebSocketService with ChangeNotifier {
     _channel.stream.listen(
       (message) {
         final data = json.decode(message);
+        print(message);
         updateChangeLogList(data);
       },
       onError: (error) {

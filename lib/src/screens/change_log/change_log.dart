@@ -18,11 +18,8 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
     final webSocketService = Provider.of<ChangeLogWebSocketService>(context);
     var changeLogs = webSocketService.changeLogs;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Change Log'),
-      ),
       body: changeLogs.isEmpty
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text('No events available.'))
           : ListView.separated(
               itemCount: changeLogs.length,
               itemBuilder: (context, index) {
@@ -48,6 +45,7 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
                 return ChangeLogRow(
                   formattedDate: formattedDate,
                   text: changeLog.change,
+                  changeType: changeLog.changeType,
                 );
               },
               separatorBuilder: (context, index) => const Divider(

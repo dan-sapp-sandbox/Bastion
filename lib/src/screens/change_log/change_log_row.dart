@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 class ChangeLogRow extends StatelessWidget {
   const ChangeLogRow(
-      {super.key, required this.formattedDate, required this.text});
+      {super.key, required this.formattedDate, required this.text, required this.changeType});
 
-  final String formattedDate, text;
-  final String changeType = "add";
+  final String formattedDate, text, changeType;
 
   Icon _getIconForDeviceType(String type) {
     switch (type) {
