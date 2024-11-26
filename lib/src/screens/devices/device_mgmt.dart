@@ -16,18 +16,6 @@ class DeviceMgmt extends StatefulWidget {
 class _DeviceMgmtState extends State<DeviceMgmt> {
   final DeviceService _deviceService = DeviceService();
 
-  Future<void> _addDevice(Device newDevice) async {
-    await _deviceService.addDevice(newDevice);
-  }
-
-  Future<void> _editDevice(Device newDevice) async {
-    await _deviceService.editDevice(newDevice);
-  }
-
-  Future<void> _deleteDevice(int id) async {
-    await _deviceService.deleteDevice(id);
-  }
-
   Map<String, List<Device>> _groupDevicesByType(List<Device> devices) {
     final Map<String, List<Device>> groupedDevices = {};
     for (var device in devices) {
@@ -97,7 +85,8 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                                         onEdit: (deviceData) async {
                                           final navigator =
                                               Navigator.of(modalContext);
-                                          await _editDevice(deviceData);
+                                          await _deviceService
+                                              .editDevice(deviceData);
                                           if (navigator.canPop()) {
                                             navigator.pop();
                                           }
@@ -112,7 +101,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                               icon: const Icon(Icons.delete_outlined,
                                   color: Colors.red),
                               onPressed: () {
-                                _deleteDevice(device.id);
+                                _deviceService.deleteDevice(device.id);
                               },
                             ),
                           ],
@@ -136,7 +125,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                   onEdit: (deviceData) async {},
                   onAdd: (deviceData) async {
                     final navigator = Navigator.of(context);
-                    await _addDevice(deviceData);
+                    await _deviceService.addDevice(deviceData);
                     navigator.pop();
                   },
                 ),
