@@ -4,10 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/dashboard/dashboard.dart';
 import 'screens/devices/device_mgmt.dart';
+import 'screens/routines/routines.dart';
 import 'screens/change_log/change_log.dart';
-import 'widgets/bottom_nav_bar.dart';
 import 'screens/settings/settings_controller.dart';
 import 'screens/settings/settings_view.dart';
+import 'widgets/bottom_nav_bar.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({
@@ -57,17 +58,15 @@ class _MyAppState extends State<MyApp> {
                   ),
                 );
               case Dashboard.routeName:
-                return MaterialPageRoute(
-                  builder: (_) => const Dashboard(),
-                );
+                return MaterialPageRoute(builder: (_) => const Dashboard());
               case DeviceMgmt.routeName:
-                return MaterialPageRoute(
-                    builder: (_) => const DeviceMgmt());
+                return MaterialPageRoute(builder: (_) => const DeviceMgmt());
+              case RoutinesPage.routeName:
+                return MaterialPageRoute(builder: (_) => const RoutinesPage());
               case ChangeLogPage.routeName:
                 return MaterialPageRoute(builder: (_) => const ChangeLogPage());
               default:
-                return MaterialPageRoute(
-                    builder: (_) => const Dashboard());
+                return MaterialPageRoute(builder: (_) => const Dashboard());
             }
           },
           home: Scaffold(
@@ -81,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     const Dashboard(),
                     const DeviceMgmt(),
-                    const ChangeLogPage(),
+                    const RoutinesPage(),
                     const ChangeLogPage(),
                     SettingsView(
                       controller: widget.settingsController,
