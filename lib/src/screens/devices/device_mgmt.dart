@@ -65,7 +65,7 @@ class _DeviceMgmtState extends State<DeviceMgmt> {
                     ),
                     ...devices.map((device) {
                       return ListTile(
-                        title: Text(device.name),
+                        title: Text('${device.room}: ${device.name}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
