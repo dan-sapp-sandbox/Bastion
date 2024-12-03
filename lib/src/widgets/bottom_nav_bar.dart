@@ -14,7 +14,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBar(
       onDestinationSelected: onItemSelected,
-      indicatorColor: Colors.blue,
+      indicatorColor: const Color.fromARGB(135, 33, 149, 243),
       selectedIndex: currentIndex,
       destinations: const <Widget>[
         NavigationDestination(

@@ -35,7 +35,7 @@ class DeviceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
         color: Colors.deepPurple.shade800.withOpacity(0.3),
         borderRadius: BorderRadius.circular(20),
@@ -45,7 +45,7 @@ class DeviceTile extends StatelessWidget {
           onTap: device.isOn ? onTurnOff : onTurnOn,
           borderRadius: BorderRadius.circular(20),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(20.0),
             child: Row(
               children: [
                 Icon(
@@ -54,15 +54,28 @@ class DeviceTile extends StatelessWidget {
                   color: device.isOn ? Colors.amber : Colors.blueGrey,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    device.name,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.amber,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
+                  padding: const EdgeInsets.only(left: 18.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        device.name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.amber,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        device.isOn ? 'On' : 'Off',
+                        style: const TextStyle(
+                          color: Colors.amber,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

@@ -17,7 +17,8 @@ class DeviceFormState extends State<DeviceForm> {
   final _formKey = GlobalKey<FormState>();
   int? _id;
   String _name = '';
-  String _type = 'light'; // Default type
+  String _type = 'light';
+  String _room = 'Other';
   bool _isOn = false;
   bool isAdd = false;
 
@@ -29,6 +30,7 @@ class DeviceFormState extends State<DeviceForm> {
     _name = widget.device?.name ?? '';
     _type = widget.device?.type ?? 'light';
     _isOn = widget.device?.isOn ?? false;
+    _room = widget.device?.room ?? 'Other';
   }
 
   @override
@@ -58,14 +60,14 @@ class DeviceFormState extends State<DeviceForm> {
                 DropdownMenuItem(value: 'light', child: Text('Light')),
                 DropdownMenuItem(value: 'lock', child: Text('Lock')),
                 DropdownMenuItem(value: 'fan', child: Text('Fan')),
-                DropdownMenuItem(value: 'thermostat', child: Text('Thermostat')),
+                DropdownMenuItem(
+                    value: 'thermostat', child: Text('Thermostat')),
                 DropdownMenuItem(value: 'speaker', child: Text('Speaker')),
                 DropdownMenuItem(value: 'camera', child: Text('Camera')),
               ],
               onChanged: (value) {
                 setState(() {
-                  _type =
-                      value ?? 'light'; // Ensure a valid value is always set
+                  _type = value ?? 'light';
                 });
               },
               validator: (value) {
@@ -86,11 +88,11 @@ class DeviceFormState extends State<DeviceForm> {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
                   Device device = Device(
-                    id: _id ??
-                        0, // Use a default id if _id is null (for adding a new device)
+                    id: _id ?? 0,
                     name: _name,
                     type: _type,
                     isOn: _isOn,
+                    room: _room,
                   );
                   _id == null ? widget.onAdd(device) : widget.onEdit(device);
                 }

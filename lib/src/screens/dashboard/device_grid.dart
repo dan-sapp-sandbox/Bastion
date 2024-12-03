@@ -10,25 +10,83 @@ class DeviceGrid extends StatelessWidget {
 
   final DeviceService _deviceService = DeviceService();
 
+  Map<String, List<Device>> _groupDevicesByRoom(List<Device> devices) {
+    final Map<String, List<Device>> groupedDevices = {};
+    for (var device in devices) {
+      groupedDevices.putIfAbsent(device.room, () => []).add(device);
+    }
+    return groupedDevices;
+  }
+
+  List<Widget> _buildDeviceRows(List<Device> devices) {
+    List<Widget> rows = [];
+
+    for (int i = 0; i < devices.length; i += 2) {
+      // Take two devices at a time (i and i+1), if available
+      var device1 = devices[i];
+      var device2 = (i + 1 < devices.length) ? devices[i + 1] : null;
+
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: DeviceTile(
+                  device: device1,
+                  onTurnOn: () => _deviceService.toggleDevice(device1, true),
+                  onTurnOff: () => _deviceService.toggleDevice(device1, false),
+                ),
+              ),
+              if (device2 == null)
+                const Expanded(
+                  child: Text(' '),
+                ),
+              if (device2 != null) const SizedBox(width: 10),
+              if (device2 != null)
+                Expanded(
+                  child: DeviceTile(
+                    device: device2,
+                    onTurnOn: () => _deviceService.toggleDevice(device2, true),
+                    onTurnOff: () =>
+                        _deviceService.toggleDevice(device2, false),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return rows;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(10),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 2,
-      ),
-      itemCount: devices.length,
-      itemBuilder: (context, index) {
-        var device = devices[index];
-        return DeviceTile(
-          device: device,
-          onTurnOn: () => _deviceService.toggleDevice(device, true),
-          onTurnOff: () => _deviceService.toggleDevice(device, false),
+    return ListView(
+      children: _groupDevicesByRoom(devices).entries.map((entry) {
+        final room = entry.key;
+        final devices = entry.value;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                room,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            // Build rows of 2 devices each
+            ..._buildDeviceRows(devices),
+          ],
         );
-      },
+      }).toList(),
     );
   }
 }
