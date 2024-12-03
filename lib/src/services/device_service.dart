@@ -32,6 +32,7 @@ class DeviceService {
         "id": device.id,
         "name": device.name,
         "type": device.type,
+        "room": device.room,
         "isOn": toOn,
       }),
     );
